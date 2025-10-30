@@ -11,7 +11,7 @@ export default function Purchase() {
     const [barcode, setBarcode] = useState("");
     const [selectedSupplier, setSelectedSupplier] = useState({
         value: 1,
-        label: "Own Supplier",
+        label: window.translations.own_supplier,
     });
     const [purchaseId, setPurchaseId] = useState(null);
     const [date, setDate] = useState(null);
@@ -212,20 +212,20 @@ export default function Purchase() {
             return;
         }
         if (!date) {
-            toast.error("Please select purchase date.");
+            toast.error(window.translations.select_purchase_date);
             return;
         }
         if (!supplierId) {
-            toast.error("Please select a supplier.");
+            toast.error(window.translations.select_supplier);
             return;
         }
 
         // Show confirmation dialog
         Swal.fire({
-            title: `Are you sure you want to save this purchase?`,
+            title: window.translations.confirm_save_purchase,
             showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: "No",
+            confirmButtonText: window.translations.yes,
+            denyButtonText: window.translations.no,
             customClass: {
                 actions: "my-actions",
                 cancelButton: "order-1 right-gap",
@@ -325,7 +325,7 @@ export default function Purchase() {
                         <div className="row">
                             <div className="mb-3 col-md-6">
                                 <label htmlFor="date" className="form-label">
-                                    Purchase Date
+                                    {window.translations.purchase_date}
                                     <span className="text-danger">*</span>
                                 </label>
                                 <div>
@@ -351,7 +351,7 @@ export default function Purchase() {
                                     htmlFor="supplier"
                                     className="form-label"
                                 >
-                                    Supplier
+                                    {window.translations.supplier}
                                     <span className="text-danger">*</span>
                                 </label>
                                 <Suppliers
@@ -381,10 +381,10 @@ export default function Purchase() {
                                     placeholder="Enter product barcode/name"
                                 />
                                 <button
-                                    className="btn bg-gradient-primary ml-2"
+                                    className="btn bg-gradient-primary mr-2"
                                     onClick={handleSearchAdd}
                                 >
-                                    Add Product
+                                    {window.translations.add_product}
                                 </button>
                             </div>
                         </div>

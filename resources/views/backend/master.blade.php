@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 
 <head>
     <meta charset="utf-8">
@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="{{ asset('plugins/jqvmap/jqvmap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.rtl.min.css') }}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Daterange picker -->
@@ -107,9 +108,12 @@
     @stack('style')
     @viteReactRefresh
     @vite('resources/js/app.jsx')
+    <script>
+        window.translations = {!! json_encode(\Illuminate\Support\Facades\Lang::get('app')) !!};
+    </script>
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed text-right">
 
     <x-simple-alert />
 
@@ -126,7 +130,7 @@
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar elevation-4 sidebar-light-lightblue">
+        <aside class="main-sidebar elevation-4 sidebar-light-lightblue text-right">
             <!-- Brand Logo -->
             <a href="{{ route('frontend.home') }}" class="brand-link">
                 <img src="{{ assetImage(readconfig('site_logo')) }}" alt="Logo"
