@@ -140,7 +140,8 @@ This guide covers two setup methods:
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/qtecsolution/qpos.git
+git clone https://github.com/Ezaddeen/zaad_store.git
+
 ```
 
 ```bash
