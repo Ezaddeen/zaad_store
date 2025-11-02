@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'General Settings')
+{{-- تعريب عنوان الصفحة --}}
+@section('title', __('settings.general_settings'))
 
 @section('content')
 
@@ -11,62 +12,63 @@
             <a class="nav-link {{ @$_GET['active-tab'] == 'website-info' ? 'active' : '' }}" id="vert-tabs-1"
                 data-toggle="pill" href="#tabs-1" role="tab" aria-controls="tabs-1" aria-selected="true">
                 <i class="fas fa-desktop"></i>
-                &nbsp;Website Info
+                &nbsp;{{ __('settings.website_info') }}
             </a>
             @endcan
             @can('contact_settings')
             <a class="nav-link {{ @$_GET['active-tab'] == 'contacts' ? 'active' : '' }}" id="vert-tabs-2"
                 data-toggle="pill" href="#tabs-2" role="tab" aria-controls="tabs-2" aria-selected="false">
                 <i class="fas fa-address-book"></i>
-                &nbsp;Contacts
+                &nbsp;{{ __('settings.contacts') }}
             </a>
             @endcan
             @can('socials_settings')
             <a class="nav-link {{ @$_GET['active-tab'] == 'social-links' ? 'active' : '' }}" id="vert-tabs-3"
                 data-toggle="pill" href="#tabs-3" role="tab" aria-controls="tabs-3" aria-selected="false">
                 <i class="fas fa-share-alt"></i>
-                &nbsp;Social Links
+                &nbsp;{{ __('settings.social_links') }}
             </a>
             @endcan
             @can('style_settings')
             <a class="nav-link {{ @$_GET['active-tab'] == 'style-settings' ? 'active' : '' }}" id="vert-tabs-4"
                 data-toggle="pill" href="#tabs-4" role="tab" aria-controls="tabs-4" aria-selected="false">
                 <i class="fas fa-swatchbook"></i>
-                &nbsp;Style Settings
+                &nbsp;{{ __('settings.style_settings') }}
             </a>
             @endcan
             @can('custom_settings')
             <a class="nav-link {{ @$_GET['active-tab'] == 'custom-css' ? 'active' : '' }}" id="vert-tabs-5"
                 data-toggle="pill" href="#tabs-5" role="tab" aria-controls="tabs-5" aria-selected="false">
                 <i class="fas fa-code"></i>
-                &nbsp;Custom CSS
+                &nbsp;{{ __('settings.custom_css') }}
             </a>
             @endcan
             @can('notification_settings')
             <a class="nav-link {{ @$_GET['active-tab'] == 'notification-settings' ? 'active' : '' }}" id="vert-tabs-6"
                 data-toggle="pill" href="#tabs-6" role="tab" aria-controls="tabs-6" aria-selected="false">
                 <i class="fas fa-envelope"></i>
-                &nbsp;Notification Settings
+                &nbsp;{{ __('settings.notification_settings') }}
             </a>
             @endcan
             @can('website_status_settings')
             <a class="nav-link {{ @$_GET['active-tab'] == 'website-status' ? 'active' : '' }}" id="vert-tabs-7"
                 data-toggle="pill" href="#tabs-7" role="tab" aria-controls="tabs-7" aria-selected="false">
                 <i class="fas fa-power-off"></i>
-                &nbsp;Website Status
+                &nbsp;{{ __('settings.website_status') }}
             </a>
             @endcan
             @can('invoice_settings')
             <a class="nav-link {{ @$_GET['active-tab'] == 'invoice-settings' ? 'active' : '' }}" id="vert-tabs-8"
                 data-toggle="pill" href="#tabs-8" role="tab" aria-controls="tabs-8" aria-selected="false">
                 <i class="fas fa-file-invoice"></i>
-                &nbsp;Invoice Settings
+                &nbsp;{{ __('settings.invoice_settings') }}
             </a>
             @endcan
         </div>
     </div>
     <div class="col-8 col-sm-10">
         <div class="tab-content" id="vert-tabs-tabContent">
+            {{-- تبويبة معلومات الموقع --}}
             @can('website_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'website-info' ? 'active show' : '' }}" id="tabs-1"
                 role="tabpanel" aria-labelledby="vert-tabs-1">
@@ -76,38 +78,39 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-desktop"></i>
-                            &nbsp;&nbsp;Website Info
+                            &nbsp;&nbsp;{{ __('settings.website_info') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Website Title</label>
+                            <label>{{ __('settings.website_title') }}</label>
                             <input class="form-control" name="site_name" type="text"
-                                value="{{ readConfig('site_name') }}" placeholder="Enter Site Title">
+                                value="{{ readConfig('site_name') }}" placeholder="{{ __('settings.enter_site_title') }}">
                         </div>
                         <div class="form-group">
-                            <label>Meta Description</label>
+                            <label>{{ __('settings.meta_description') }}</label>
                             <textarea class="form-control" rows="2" name="meta_description" cols="50"
-                                placeholder="Enter Meta Description">{{ readConfig('meta_description') }}</textarea>
+                                placeholder="{{ __('settings.enter_meta_description') }}">{{ readConfig('meta_description') }}</textarea>
                         </div>
                         <div class="form-group">
-                            <label>Meta Keywords</label>
-                            <textarea class="form-control" rows="2" name="meta_keywords" cols="50" placeholder="Enter Keywords">{{ readConfig('meta_keywords') }}</textarea>
+                            <label>{{ __('settings.meta_keywords') }}</label>
+                            <textarea class="form-control" rows="2" name="meta_keywords" cols="50" placeholder="{{ __('settings.enter_keywords') }}">{{ readConfig('meta_keywords') }}</textarea>
                         </div>
                         <div class="form-group">
-                            <label>Website URL</label>
+                            <label>{{ __('settings.website_url') }}</label>
                             <input class="form-control" name="site_url" type="url"
-                                value="{{ readConfig('site_url') }}" placeholder="Enter Site URL">
+                                value="{{ readConfig('site_url') }}" placeholder="{{ __('settings.enter_site_url') }}">
                         </div>
                     </div>
                 </form>
 
             </div>
             @endcan
+            {{-- تبويبة جهات الاتصال --}}
             @can('contact_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'contacts' ? 'active show' : '' }}" id="tabs-2"
                 role="tabpanel" aria-labelledby="vert-tabs-2">
@@ -117,42 +120,42 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-address-book"></i>
-                            &nbsp;&nbsp;Contacts
+                            &nbsp;&nbsp;{{ __('settings.contacts') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Address</label>
-                            <input placeholder="" class="form-control" name="contact_address" type="text"
+                            <label>{{ __('settings.address') }}</label>
+                            <input placeholder="{{ __('settings.address') }}" class="form-control" name="contact_address" type="text"
                                 value="{{ readConfig('contact_address') }}">
                         </div>
                         <div class="form-group">
-                            <label>Phone</label>
-                            <input placeholder="Phone" class="form-control" name="contact_phone" type="tel"
+                            <label>{{ __('settings.phone') }}</label>
+                            <input placeholder="{{ __('settings.phone') }}" class="form-control" name="contact_phone" type="tel"
                                 value="{{ readConfig('contact_phone') }}">
                         </div>
                         <div class="form-group">
-                            <label>Fax</label>
-                            <input placeholder="Fax" class="form-control" name="contact_fax" type="tel"
+                            <label>{{ __('settings.fax') }}</label>
+                            <input placeholder="{{ __('settings.fax') }}" class="form-control" name="contact_fax" type="tel"
                                 value="{{ readConfig('contact_fax') }}">
                         </div>
                         <div class="form-group">
-                            <label>Mobile</label>
-                            <input placeholder="Mobile" class="form-control" name="contact_mobile" type="tel"
+                            <label>{{ __('settings.mobile') }}</label>
+                            <input placeholder="{{ __('settings.mobile') }}" class="form-control" name="contact_mobile" type="tel"
                                 value="{{ readConfig('contact_mobile') }}">
                         </div>
                         <div class="form-group">
-                            <label>Email</label>
-                            <input placeholder="Email" class="form-control" name="contact_email" type="email"
+                            <label>{{ __('settings.email') }}</label>
+                            <input placeholder="{{ __('settings.email') }}" class="form-control" name="contact_email" type="email"
                                 value="{{ readConfig('contact_email') }}">
                         </div>
                         <div class="form-group">
-                            <label>Working Time</label>
-                            <input placeholder="Sunday to Thursday 08:00 AM to 05:00 PM" class="form-control"
+                            <label>{{ __('settings.working_time') }}</label>
+                            <input placeholder="{{ __('settings.working_time_placeholder') }}" class="form-control"
                                 name="working_hour" type="text" value="{{ readConfig('working_hour') }}">
                         </div>
                     </div>
@@ -160,6 +163,7 @@
 
             </div>
             @endcan
+            {{-- تبويبة الروابط الاجتماعية --}}
             @can('socials_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'social-links' ? 'active show' : '' }}"
                 id="tabs-3" role="tabpanel" aria-labelledby="vert-tabs-3">
@@ -168,11 +172,11 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-share-alt"></i>
-                            &nbsp;&nbsp;Social Links
+                            &nbsp;&nbsp;{{ __('settings.social_links') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
                     <div class="col-md-12">
@@ -260,6 +264,7 @@
                 </form>
             </div>
             @endcan
+            {{-- تبويبة إعدادات التصميم --}}
             @can('style_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'style-settings' ? 'active show' : '' }}"
                 id="tabs-4" role="tabpanel" aria-labelledby="vert-tabs-4">
@@ -270,16 +275,16 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-swatchbook"></i>
-                            &nbsp;&nbsp;Style Settings
+                            &nbsp;&nbsp;{{ __('settings.style_settings') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
 
                     <div class="col-12 my-2">
-                        <label>Site Logo</label>
+                        <label>{{ __('settings.site_logo') }}</label>
 
                         <div class="row">
                             <div class="col-sm-12">
@@ -293,13 +298,13 @@
                             onchange="previewThumbnail(this)">
                         <small>
                             <i class="far fa-question-circle"></i>
-                            ( 260x60 px ) - Extensions: .png, .jpg, .jpeg, .gif, .svg
+                            {{ __('settings.logo_dimensions') }} - Extensions: .png, .jpg, .jpeg, .gif, .svg
                         </small>
                     </div>
                     <hr>
                     <div class="form-group row">
                         <div class="col-sm-6">
-                            <label for="style_fav">Favicon</label>
+                            <label for="style_fav">{{ __('settings.favicon') }}</label>
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="col-sm-12 box p-a-xs text-center">
@@ -314,11 +319,11 @@
                                 onchange="previewThumbnail(this)">
                             <small>
                                 <i class="far fa-question-circle"></i>
-                                ( 32x32 px ) - Extensions: .png, .jpg, .jpeg, .gif, .svg
+                                {{ __('settings.favicon_dimensions') }} - Extensions: .png, .jpg, .jpeg, .gif, .svg
                             </small>
                         </div>
                         <div class="col-sm-6">
-                            <label for="style_apple">Apple Icon</label>
+                            <label for="style_apple">{{ __('settings.apple_icon') }}</label>
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="col-sm-12 box p-a-xs text-center">
@@ -333,32 +338,33 @@
                                 onchange="previewThumbnail(this)">
                             <small>
                                 <i class="far fa-question-circle"></i>
-                                ( 180x180 px ) - Extensions: .png, .jpg, .jpeg, .gif, .svg
+                                {{ __('settings.apple_icon_dimensions') }} - Extensions: .png, .jpg, .jpeg, .gif, .svg
                             </small>
                         </div>
                     </div>
                     <hr>
                     <div class="form-group">
-                        <label>Newsletter Subscribe</label>
+                        <label>{{ __('settings.newsletter_subscribe') }}</label>
                         <div class="radio bg-white rounded pt-2 pl-2 border">
                             <label class="ui-check ui-check-md">
                                 <input {{ readConfig('newsletter_subscribe') == 1 ? 'checked' : '' }}
                                     name="newsletter_subscribe" type="radio" value="1">
                                 <i class="dark-white"></i>
-                                Active
+                                {{ __('general.active') }}
                             </label>
                             &nbsp; &nbsp;
                             <label class="ui-check ui-check-md">
                                 <input {{ readConfig('newsletter_subscribe') == 0 ? 'checked' : '' }}
                                     name="newsletter_subscribe" type="radio" value="0">
                                 <i class="dark-white"></i>
-                                Not Active
+                                {{ __('general.not_active') }}
                             </label>
                         </div>
                     </div>
                 </form>
             </div>
             @endcan
+            {{-- تبويبة كود CSS مخصص --}}
             @can('custom_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'custom-css' ? 'active show' : '' }}" id="tabs-5"
                 role="tabpanel" aria-labelledby="vert-tabs-5">
@@ -367,11 +373,11 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-code"></i>
-                            &nbsp;&nbsp;Custom CSS
+                            &nbsp;&nbsp;{{ __('settings.custom_css') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
                     <div class="col-md-12 mt-2">
@@ -382,6 +388,7 @@
                 </form>
             </div>
             @endcan
+            {{-- تبويبة إعدادات الإشعارات --}}
             @can('notification_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'notification-settings' ? 'active show' : '' }}"
                 id="tabs-6" role="tabpanel" aria-labelledby="vert-tabs-6">
@@ -391,52 +398,52 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-envelope"></i>
-                            &nbsp;&nbsp;Notification Settings
+                            &nbsp;&nbsp;{{ __('settings.notification_settings') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
                     <div class="p-a-md col-md-12">
                         <div class="form-group">
-                            <label>Website Notification Email</label>
-                            <input placeholder="Enter email" class="form-control" name="notify_email_address"
+                            <label>{{ __('settings.website_notification_email') }}</label>
+                            <input placeholder="{{ __('general.enter_email') }}" class="form-control" name="notify_email_address"
                                 type="email" value="{{ readConfig('notify_email_address') }}">
                         </div>
                         <div class="form-group">
-                            <label>Send me an email on new contact Messages : </label>
+                            <label>{{ __('settings.email_on_new_messages') }} </label>
                             <div class="radio bg-white rounded pt-2 pl-2 border">
                                 <label class="ui-check ui-check-md">
                                     <input {{ readConfig('notify_messages_status') == 1 ? 'checked' : '' }}
                                         name="notify_messages_status" type="radio" value="1">
                                     <i class="dark-white"></i>
-                                    Yes
+                                    {{ __('general.yes') }}
                                 </label>
                                 &nbsp; &nbsp;
                                 <label class="ui-check ui-check-md">
                                     <input {{ readConfig('notify_messages_status') == 0 ? 'checked' : '' }}
                                         name="notify_messages_status" type="radio" value="0">
                                     <i class="dark-white"></i>
-                                    No
+                                    {{ __('general.no') }}
                                 </label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Send me an email on new Comments : </label>
+                            <label>{{ __('settings.email_on_new_comments') }} </label>
                             <div class="radio bg-white rounded pt-2 pl-2 border">
                                 <label class="ui-check ui-check-md">
                                     <input {{ readConfig('notify_comments_status') == 1 ? 'checked' : '' }}
                                         name="notify_comments_status" type="radio" value="1">
                                     <i class="dark-white"></i>
-                                    Yes
+                                    {{ __('general.yes') }}
                                 </label>
                                 &nbsp; &nbsp;
                                 <label class="ui-check ui-check-md">
                                     <input {{ readConfig('notify_comments_status') == 0 ? 'checked' : '' }}
                                         name="notify_comments_status" type="radio" value="0">
                                     <i class="dark-white"></i>
-                                    No
+                                    {{ __('general.no') }}
                                 </label>
                             </div>
                         </div>
@@ -444,6 +451,7 @@
                 </form>
             </div>
             @endcan
+            {{-- تبويبة حالة الموقع --}}
             @can('website_status_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'website-status' ? 'active show' : '' }}"
                 id="tabs-7" role="tabpanel" aria-labelledby="vert-tabs-7">
@@ -452,41 +460,42 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-power-off"></i>
-                            &nbsp;&nbsp;Website Status
+                            &nbsp;&nbsp;{{ __('settings.website_status') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
                     <div class="p-a-md col-md-12">
                         <div class="form-group">
-                            <label>Website Status : </label>
+                            <label>{{ __('settings.website_current_status') }} </label>
                             <div class="radio bg-white rounded pt-2 pl-2 border">
                                 <label class="ui-check ui-check-md">
                                     <input {{ readConfig('is_live') == 1 ? 'checked' : '' }} name="is_live"
                                         type="radio" value="1">
                                     <i class="dark-white"></i>
-                                    Active
+                                    {{ __('general.active') }}
                                 </label>
                                 &nbsp; &nbsp;
                                 <label class="ui-check ui-check-md">
                                     <input {{ readConfig('is_live') == 0 ? 'checked' : '' }} name="is_live"
                                         type="radio" value="0">
                                     <i class="dark-white"></i>
-                                    Not Active
+                                    {{ __('general.not_active') }}
                                 </label>
                             </div>
                         </div>
 
                         <div class="form-group {{ readConfig('is_live') == 1 ? 'd-none' : '' }}" id="close_msg_div">
-                            <label>Close Message</label>
-                            <textarea placeholder="Close Message" class="form-control" rows="4" name="close_msg" cols="50">Website under maintenance&lt;h1&gt;Comming SOON&lt;/h1&gt;</textarea>
+                            <label>{{ __('settings.close_message') }}</label>
+                            <textarea placeholder="{{ __('settings.close_message') }}" class="form-control" rows="4" name="close_msg" cols="50">{{ readConfig('close_msg') ?: __('settings.default_close_message') }}</textarea>
                         </div>
                     </div>
                 </form>
             </div>
             @endcan
+            {{-- تبويبة إعدادات الفواتير --}}
             @can('invoice_settings')
             <div class="tab-pane fade {{ @$_GET['active-tab'] == 'invoice-settings' ? 'active show' : '' }}"
                 id="tabs-8" role="tabpanel" aria-labelledby="vert-tabs-8">
@@ -495,30 +504,30 @@
                     <div class="col-md-12 d-flex justify-content-between">
                         <h5>
                             <i class="fas fa-file-invoice"></i>
-                            &nbsp;&nbsp;Invoice Settings
+                            &nbsp;&nbsp;{{ __('settings.invoice_settings') }}
                         </h5>
                         <button type="submit" class="btn bg-gradient-primary">
                             <i class="fas fa-reply"></i>
-                            &nbsp;Save Changes
+                            &nbsp;{{ __('general.save_changes') }}
                         </button>
                     </div>
                     <div class="form-group">
-                        <label>Note to customer</label>
-                        <input type="text" class="form-control" placeholder="Enter message for invoice" name="note_to_customer_invoice" value="{{ readConfig('note_to_customer_invoice') }}">
+                        <label>{{ __('settings.note_to_customer') }}</label>
+                        <input type="text" class="form-control" placeholder="{{ __('settings.enter_message_for_invoice') }}" name="note_to_customer_invoice" value="{{ readConfig('note_to_customer_invoice') }}">
                     </div>
                     <div class="form-group d-flex align-items-center">
                         <label class="switch"><input type="hidden" name="is_show_logo_invoice" value="0">
                             <input onclick="updateCheckboxValue(this)" type="checkbox" {{ readConfig('is_show_logo_invoice') == 1 ? 'checked' : '' }} name="is_show_logo_invoice" id="is_show_logo_invoice" value="{{ readConfig('is_show_logo_invoice') == 1 ? 1 : '0' }}">
                             <span class="slider round"></span>
                         </label>
-                        <label for="is_show_logo_invoice" class="mx-2">Logo</label>
+                        <label for="is_show_logo_invoice" class="mx-2">{{ __('settings.show_logo') }}</label>
                     </div>
                     <div class="form-group d-flex align-items-center">
                         <label class="switch"><input type="hidden" name="is_show_site_invoice" value="0">
                             <input onclick="updateCheckboxValue(this)" type="checkbox" {{ readConfig('is_show_site_invoice') == 1 ? 'checked' : '' }} name="is_show_site_invoice" id="is_show_site_invoice" value="{{ readConfig('is_show_site_invoice') == 1 ? 1 : '0' }}">
                             <span class="slider round"></span>
                         </label>
-                        <label for="is_show_site_invoice" class="mx-2">Site Name</label>
+                        <label for="is_show_site_invoice" class="mx-2">{{ __('settings.show_site_name') }}</label>
                     </div>
                     <div class="form-group d-flex align-items-center">
                         <label class="switch"><input type="hidden" name="is_show_phone_invoice" value="0">
@@ -526,66 +535,40 @@
                             <span class="slider round"></span>
                         </label>
 
-                        <label for="is_show_phone_invoice" class="mx-2">Phone</label>
+                        <label for="is_show_phone_invoice" class="mx-2">{{ __('settings.show_phone') }}</label>
                     </div>
                     <div class="form-group d-flex align-items-center">
                         <label class="switch"><input type="hidden" name="is_show_email_invoice" value="0">
                             <input onclick="updateCheckboxValue(this)" type="checkbox" {{ readConfig('is_show_email_invoice') == 1 ? 'checked' : '' }} name="is_show_email_invoice" id="is_show_email_invoice" value="{{ readConfig('is_show_email_invoice') == 1 ? 1 : '0' }}">
                             <span class="slider round"></span>
                         </label>
-                        <label for="is_show_email_invoice" class="mx-2">Email</label>
+                        <label for="is_show_email_invoice" class="mx-2">{{ __('settings.show_email') }}</label>
                     </div>
                     <div class="form-group d-flex align-items-center">
                         <label class="switch"><input type="hidden" name="is_show_address_invoice" value="0">
                             <input onclick="updateCheckboxValue(this)" type="checkbox" {{ readConfig('is_show_address_invoice') == 1 ? 'checked' : '' }} name="is_show_address_invoice" id="is_show_address_invoice" value="{{ readConfig('is_show_address_invoice') == 1 ? 1 : '0' }}">
                             <span class="slider round"></span>
                         </label>
-                        <label for="is_show_address_invoice" class="mx-2">Address</label>
+                        <label for="is_show_address_invoice" class="mx-2">{{ __('settings.show_address') }}</label>
                     </div>
                     <div class="form-group d-flex align-items-center">
                         <label class="switch"><input type="hidden" name="is_show_customer_invoice" value="0">
                             <input onclick="updateCheckboxValue(this)" type="checkbox" {{ readConfig('is_show_customer_invoice') == 1 ? 'checked' : '' }} name="is_show_customer_invoice" id="is_show_customer_invoice" value="{{ readConfig('is_show_customer_invoice') == 1 ? 1 : '0' }}">
                             <span class="slider round"></span>
                         </label>
-                        <label for="is_show_customer_invoice" class="mx-2">Customer</label>
+                        <label for="is_show_customer_invoice" class="mx-2">{{ __('settings.show_customer') }}</label>
                     </div>
                     <div class="form-group d-flex align-items-center">
                         <label class="switch"><input type="hidden" name="is_show_note_invoice" value="0">
-                            <input onclick="updateCheckboxValue(this)" type="checkbox" {{ readConfig('is_show_note_invoice') == 1 ? 'checked' : '' }} name="is_show_note_invoice" id="is_show_note_invoice" value="{{ readConfig('is_show_note_invoice') == 1 ? 1 : '0' }}">
+                            <input onclick="updateCheckboxValue(this)" type="checkb
                             <span class="slider round"></span>
                         </label>
-                        <label for="is_show_note_invoice" class="mx-2">Note to customer</label>
+                        <label for="is_show_note_invoice" class="mx-2">{{ __('settings.show_note') }}</label>
                     </div>
-                    <div class="form-group">
-                        <label class="">Pos Invoice Width</label>
-                        <select name="receiptMaxwidth" class="form-control col-6">
-                            <option value="300px" {{ readConfig('receiptMaxwidth') == '300px' ? 'selected' : '' }}>Small</option>
-                            <option value="400px" {{ readConfig('receiptMaxwidth') == '400px' ? 'selected' : '' }}>Medium</option>
-                            <option value="500px" {{ readConfig('receiptMaxwidth') == '500px' ? 'selected' : '' }}>Large</option>
-                        </select>
-                    </div>
-
+                </form>
             </div>
             @endcan
-            </form>
         </div>
     </div>
 </div>
-</div>
 @endsection
-
-@push('script')
-<script>
-    $('input[type=radio][name=is_live]').on("change", function() {
-        if (this.value == '0') {
-            $("#close_msg_div").removeClass('d-none');
-        } else {
-            $("#close_msg_div").addClass('d-none');
-        }
-    });
-
-    function updateCheckboxValue(checkbox) {
-        checkbox.value = checkbox.checked ? '1' : '0';
-    }
-</script>
-@endpush

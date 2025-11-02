@@ -39,7 +39,7 @@ return [
     'subtotal' => 'المجموع الفرعي',
     'sub_total' => 'المجموع الفرعي',
 
-    // العمليات
+    // العمليات العامة
     'action' => 'إجراء',
     'tax' => 'الضريبة',
     'enter_tax' => 'أدخل الضريبة',
@@ -64,8 +64,41 @@ return [
     'users' => 'المستخدمون',
     'logout' => 'تسجيل الخروج',
 
-    // POS
+    // POS - مفاتيح الترجمة المضافة لتطبيق React
     'pos' => 'نقطة البيع',
+    'select_customer' => 'اختر العميل',
+    'enter_barcode' => 'أدخل رمز الباركود',
+    'enter_product_name' => 'أدخل اسم المنتج',
+    'apply_fractional_discount' => 'تطبيق خصم كسري',
+    'total' => 'الإجمالي',
+    'paid' => 'المدفوع',
+    'enter_paid' => 'أدخل المبلغ المدفوع',
+    'due' => 'المتبقي',
+    'clear_cart' => 'مسح العربة',
+    'checkout' => 'إتمام الطلب',
+    'loading_more' => 'جارٍ تحميل المزيد...',
+    
+    // POS - تنبيهات SweetAlert
+    'confirm_empty_cart_title' => 'هل أنت متأكد من مسح عربة التسوق؟',
+    'confirm_create_order_title' => 'هل أنت متأكد من إتمام هذا الطلب؟ <br>المتبقي: :due', // :due سيتم استبدالها في React
+    'confirm_delete_title' => 'هل أنت متأكد من حذف هذا الصنف من العربة؟',
+
+    // POS - رسائل الأخطاء
+    'select_customer_error' => 'الرجاء اختيار العميل',
+    
+    // POS - عناوين جدول العربة (تستخدم في Pos.js و Cart.js)
+    'cart_total' => 'الإجمالي',
+    'cart_price' => 'السعر',
+    'cart_quantity' => 'الكمية',
+    'cart_name' => 'الاسم',
+
+    // POS - مفاتيح CustomerSelect
+    'default_customer_label' => 'عميل عابر',
+    'default_customer_value' => 1,
+    'placeholder' => 'اختر عميلاً أو أنشئ عميلاً جديداً',
+    'create_label' => 'إنشاء عميل جديد: ":input"', // :input سيتم استبدالها في React
+    'no_options_message' => 'لا توجد خيارات',
+    'loading_message' => 'جارٍ التحميل...',
 
     // وحدات أخرى
     'brands' => 'العلامات التجارية',

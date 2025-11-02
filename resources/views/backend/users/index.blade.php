@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'User Management')
+{{-- العنوان: استخدام 'user.management' --}}
+@section('title', __('user.management'))
 
 @section('content')
 <div class="card">
@@ -8,7 +9,8 @@
     <div class="mt-n5 mb-3 d-flex justify-content-end">
         <a href="{{ route('backend.admin.user.create') }}" class="btn bg-gradient-primary">
             <i class="fas fa-plus-circle"></i>
-            Add New
+            {{-- زر الإضافة: استخدام 'general.add_new' --}}
+            @lang('general.add_new')
         </a>
     </div>
     @endcan
@@ -19,14 +21,27 @@
                     <table id="datatables" class="table table-hover">
                         <thead>
                             <tr>
-                                <th data-orderable="false">#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Created</th>
-                                <th>Status</th>
+                                {{-- عمود الصورة المصغرة (Thumb) --}}
+                                <th data-orderable="false">@lang('user.thumb')</th> 
+                                
+                                {{-- الاسم: استخدام 'common.name' (افتراضًا أنه العمود 1 في الـ DataTables) --}}
+                                <th>@lang('common.name')</th>
+                                
+                                {{-- البريد الإلكتروني: استخدام 'general.email' --}}
+                                <th>@lang('general.email')</th>
+                                
+                                {{-- الدور: استخدام 'user.role' --}}
+                                <th>@lang('user.role')</th>
+                                
+                                {{-- تاريخ الإنشاء: استخدام 'common.created_at' --}}
+                                <th>@lang('common.created_at')</th>
+                                
+                                {{-- الحالة: استخدام 'common.status' --}}
+                                <th>@lang('common.status')</th>
+                                
+                                {{-- الإجراء: استخدام 'common.action' --}}
                                 <th data-orderable="false">
-                                    Action
+                                    @lang('common.action')
                                 </th>
                             </tr>
                         </thead>
@@ -46,16 +61,27 @@
             serverSide: true,
             ordering: true,
             order: [
-                [1, 'asc']
+                [1, 'asc'] // الترتيب حسب العمود 1 (الاسم)
             ],
             ajax: {
                 url: "{{ route('backend.admin.users') }}"
             },
 
-            columns: [{
+            // إضافة تعريب واجهة DataTables
+            language: {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/ar.json" 
+            },
+
+            columns: [
+                {
+                    // يجب أن يكون هذا هو عمود التسلسل # (DT_RowIndex) أو الصورة المصغرة حسب رؤوس الأعمدة.
+                    // في الـ HTML كان (#) هو العمود الأول، لكن في JS العمود الأول هو 'thumb'.
+                    // نعتمد على ترتيب الـ HTML الصحيح، ونتوقع أن 'thumb' هو العمود الأول:
                     data: 'thumb',
                     name: 'thumb',
-                }, {
+                    orderable: false, // الصورة لا تُرتّب عادةً
+                },
+                {
                     data: 'name',
                     name: 'name'
                 },
@@ -64,20 +90,21 @@
                     name: 'email'
                 },
                 {
-                    data: 'roles',
+                    data: 'roles', // يرجى ملاحظة أن هذا الاسم يختلف عن اسم رأس العمود 'Role'
                     name: 'roles'
                 },
                 {
-                    data: 'created',
+                    data: 'created', // يرجى ملاحظة أن هذا الاسم يختلف عن اسم رأس العمود 'Created'
                     name: 'created'
                 },
                 {
-                    data: 'suspend',
-                    name: 'ststus'
+                    data: 'suspend', // يرجى ملاحظة أن هذا الاسم يختلف عن اسم رأس العمود 'Status'
+                    name: 'status' // تم تصحيح اسم العمود هنا ليطابق رؤوس الـ JS
                 },
                 {
                     data: 'action',
-                    name: 'action'
+                    name: 'action',
+                    orderable: false,
                 },
             ]
         });

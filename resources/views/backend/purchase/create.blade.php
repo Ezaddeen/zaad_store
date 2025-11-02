@@ -1,6 +1,6 @@
 @extends('backend.master')
 
-@section('title', 'Product Purchase')
+@section('title', __('purchases.product_purchase')) {{-- تعريب عنوان الصفحة --}}
 
 @section('content')
 </div>
@@ -17,5 +17,6 @@
 @endpush
 @push('script')
 <script>
+
 </script>
 @endpush

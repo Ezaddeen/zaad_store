@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Create Customer')
+{{-- ⬅️ تعريب العنوان: 'Update Customer' -> 'تحديث العميل' --}}
+@section('title', __('customers.update_customer')) 
 
 @section('content')
 <div class="card">
@@ -11,33 +12,44 @@
       @csrf
       <div class="card-body">
         <div class="row">
+          
+          {{-- ⬅️ حقل الاسم: يستخدم مفتاح 'name' من common.php --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Name
+              {{ __('common.name') }}
               <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control" placeholder="Enter title" name="name"
-              value="{{ $customer->name }}" required>
+            <input type="text" class="form-control" 
+              placeholder="{{ __('customers.placeholder_name') }}" name="name"
+              {{-- يحافظ على قيمة العميل الحالية --}}
+              value="{{ old('name', $customer->name) }}" required>
           </div>
+          
+          {{-- ⬅️ حقل الهاتف: يستخدم مفتاح 'phone' من customers.php --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Phone
+              {{ __('customers.phone') }}
               <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control" placeholder="Enter phone" name="phone"
-              value="{{ $customer->phone }}" required>
+            <input type="text" class="form-control" 
+              placeholder="{{ __('customers.placeholder_phone') }}" name="phone"
+              value="{{ old('phone', $customer->phone) }}" required>
           </div>
+          
+          {{-- ⬅️ حقل العنوان: يستخدم مفتاح 'address' من customers.php --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Address
+              {{ __('customers.address') }}
             </label>
-            <input type="text" class="form-control" placeholder="Enter Address" name="address"
-              value="{{ $customer->address }}">
+            <input type="text" class="form-control" 
+              placeholder="{{ __('customers.placeholder_address') }}" name="address"
+              value="{{ old('address', $customer->address) }}">
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <button type="submit" class="btn bg-gradient-primary">Update</button>
+            {{-- ⬅️ زر الإرسال: يستخدم مفتاح 'update' من common.php --}}
+            <button type="submit" class="btn bg-gradient-primary">{{ __('common.update') }}</button>
           </div>
         </div>
       </div>

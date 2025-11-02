@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Import Product')
+{{-- ⬅️ تعريب العنوان: 'Import Product' -> 'استيراد المنتجات' --}}
+@section('title', __('products.import_product'))
 
 @section('content')
 <div class="card">
@@ -12,14 +13,19 @@
         <div class="row">
           <div class="mb-3 col-md-6">
             <div class="form-group">
-              <label for="exampleInputFile">File input</label>
+              {{-- ⬅️ تعريب 'File input' --}}
+              <label for="exampleInputFile">{{ __('general.file_input') }}</label>
               <div class="input-group">
                 <div class="custom-file">
                   <input type="file" class="custom-file-input" name="file" id="exampleInputFile" required>
-                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                  {{-- ⬅️ تعريب 'Choose file' --}}
+                  <label class="custom-file-label" for="exampleInputFile">{{ __('general.choose_file') }}</label>
                 </div>
                 <div class="input-group-append">
-                  <a class="input-group-text" href="{{ route('backend.admin.products.import',['download-demo' => true]) }}"><i class="fas fa-download"></i> Demo</a>
+                  {{-- ⬅️ تعريب أيقونة ورابط 'Demo' --}}
+                  <a class="input-group-text" href="{{ route('backend.admin.products.import',['download-demo' => true]) }}">
+                    <i class="fas fa-download"></i> {{ __('general.download') }} {{ __('general.demo') }}
+                  </a>
                 </div>
               </div>
             </div>
@@ -27,9 +33,9 @@
         </div>
         <div class="row">
           <div class="mb-3 col-md-6">
-            <button type="submit" class="btn btn-block bg-gradient-primary">Save</button>
-            <!-- /.card-body -->
-          </div>
+            {{-- ⬅️ زر الإرسال: 'Save' -> 'حفظ' --}}
+            <button type="submit" class="btn btn-block bg-gradient-primary">{{ __('common.save') }}</button>
+            </div>
         </div>
       </div>
     </form>

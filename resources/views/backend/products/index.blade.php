@@ -1,18 +1,21 @@
 @extends('backend.master')
 
-@section('title', 'Products')
+{{-- ⬅️ تعريب العنوان: 'Products' -> 'المنتجات' --}}
+@section('title', __('products.products'))
 
 @section('content')
 <div class="card">
 
   @can('product_create')
   <div class="mt-n5 mb-3 d-flex justify-content-end">
+    {{-- ⬅️ تعريب الزر: 'Add New' -> 'إضافة جديد' --}}
     <a href="{{ route('backend.admin.products.create') }}" class="btn bg-gradient-primary">
       <i class="fas fa-plus-circle"></i>
-      Add New
+      {{ __('general.add_new') }}
     </a>
   </div>
   @endcan
+  
   <div class="card-body p-2 p-md-4 pt-0">
     <div class="row g-4">
       <div class="col-md-12">
@@ -20,19 +23,19 @@
           <table id="datatables" class="table table-hover">
             <thead>
               <tr>
-                <th data-orderable="false">#</th>
-                <th></th>
-                <th>Name</th>
-                <th>Price{{currency()->symbol??''}}</th>
-                <th>Stock</th>
-                <th>Created</th>
-                <th>Status</th>
-                <th data-orderable="false">Action</th>
+                {{-- ⬅️ تعريب رؤوس الجدول --}}
+                <th data-orderable="false">{{ __('general.sn') }}</th>
+                <th></th> {{-- عمود الصورة --}}
+                <th>{{ __('common.name') }}</th>
+                <th>{{ __('common.price') }}{{currency()->symbol??''}}</th>
+                <th>{{ __('products.stock') }}</th>
+                <th>{{ __('common.created_at') }}</th>
+                <th>{{ __('common.status') }}</th>
+                <th data-orderable="false">{{ __('common.action') }}</th>
               </tr>
             </thead>
           </table>
-          <!-- Pagination Links -->
-        </div>
+          </div>
       </div>
     </div>
   </div>

@@ -1,14 +1,17 @@
 @extends('backend.master')
 
-@section('title', 'Customers')
+{{-- ⬅️ تعريب العنوان: 'Customers' -> 'العملاء' --}}
+@section('title', __('customers.title')) 
 
 @section('content')
 <div class="card">
+
   @can('customer_create')
   <div class="mt-n5 mb-3 d-flex justify-content-end">
     <a href="{{ route('backend.admin.customers.create') }}" class="btn bg-gradient-primary">
       <i class="fas fa-plus-circle"></i>
-      Add New
+      {{-- ⬅️ تعريب زر الإضافة: 'Add New' -> 'إضافة جديد' (نفترض في ملف general/customers) --}}
+      <span>{{ __('general.add_new') }}</span> 
     </a>
   </div>
   @endcan
@@ -19,16 +22,23 @@
           <table id="datatables" class="table table-hover">
             <thead>
               <tr>
+                {{-- ⬅️ رؤوس الأعمدة --}}
                 <th data-orderable="false">#</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>Created</th>
+                
+                {{-- ⬅️ استخدام المفاتيح من common.php / customers.php --}}
+                <th>{{ __('common.name') }}</th> 
+                <th>{{ __('customers.phone') }}</th> 
+                <th>{{ __('customers.address') }}</th> 
+                <th>{{ __('customers.created') }}</th> {{-- مفتاح تاريخ الإنشاء --}}
+                
                 <th data-orderable="false">
-                  Action
+                  {{ __('common.action') }} 
                 </th>
               </tr>
             </thead>
+            <tbody>
+                {{-- يتم ملء الجدول بواسطة DataTables / AJAX --}}
+            </tbody>
           </table>
         </div>
       </div>
@@ -40,6 +50,7 @@
 
 @push('script')
 <script type="text/javascript">
+  // لا حاجة لتعريب هذا الجزء من الكود، حيث أنه يتحكم في منطق البيانات وليس في العرض
   $(function() {
     let table = $('#datatables').DataTable({
       processing: true,
@@ -51,6 +62,9 @@
       ajax: {
         url: "{{ route('backend.admin.customers.index') }}"
       },
+      
+      // لتطبيق تعريب DataTables نفسه، يجب إضافة ملف اللغة هنا:
+      // language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/ar.json' },
 
       columns: [{
           data: 'DT_RowIndex',

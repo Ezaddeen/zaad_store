@@ -1,6 +1,6 @@
 @extends('backend.master')
 
-@section('title', 'Update Brand')
+@section('title', __('brands.update_brand')) {{-- تم تعريب 'Update Brand' --}}
 
 @section('content')
 <div class="card">
@@ -13,24 +13,24 @@
         <div class="row">
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Name
+              {{ __('brands.name') }} {{-- من brands.php --}}
               <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control" placeholder="Enter title" name="name"
+            <input type="text" class="form-control" placeholder="{{ __('brands.enter_name') }}" name="name" {{-- من brands.php --}}
               value="{{ old('name', $brand->name) }}" required>
           </div>
           <div class="mb-3 col-md-6">
             <label for="thumbnailInput" class="form-label">
-              Image
+              {{ __('brands.image') }} {{-- من brands.php --}}
             </label>
             <div class="image-upload-container" id="imageUploadContainer">
               <input type="file" class="form-control" name="brand_image" id="thumbnailInput" accept="image/*" style="display: none;">
               <div class="thumb-preview" id="thumbPreviewContainer">
-                <img src="{{ asset('storage/' . $brand->image) }}" alt="Thumbnail Preview"
+                <img src="{{ asset('storage/' . $brand->image) }}" alt="{{ __('brands.thumbnail_preview') }}" {{-- من brands.php --}}
                   class="img-thumbnail" id="thumbnailPreview" onerror="this.onerror=null; this.src='{{ asset('assets/images/no-image.png') }}'">
                 <div class="upload-text d-none">
                   <i class="fas fa-plus-circle"></i>
-                  <span>Upload Image</span>
+                  <span>{{ __('brands.upload_image') }}</span> {{-- من brands.php --}}
                 </div>
               </div>
             </div>
@@ -38,9 +38,9 @@
 
           <div class="mb-3 col-md-12">
             <label for="description" class="form-label">
-              Description
+              {{ __('brands.description') }} {{-- من brands.php --}}
             </label>
-            <textarea class="form-control" placeholder="Enter description" name="description">{{ old('description',$brand->description) }}</textarea>
+            <textarea class="form-control" placeholder="{{ __('brands.enter_description') }}" name="description">{{ old('description',$brand->description) }}</textarea> {{-- من brands.php --}}
           </div>
           <div class="mb-3 col-md-12">
             <div class="form-switch px-4">
@@ -48,14 +48,14 @@
               <input class="form-check-input" type="checkbox" name="status" id="active"
                 value="1" @if($brand->status==1) checked @endif>
               <label class="form-check-label" for="active">
-                Active
+                {{ __('common.active') }} {{-- من common.php --}}
               </label>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <button type="submit" class="btn bg-gradient-primary">Update</button>
+            <button type="submit" class="btn bg-gradient-primary">{{ __('common.update') }}</button> {{-- تم تعريب 'Update' --}}
           </div>
         </div>
       </div>

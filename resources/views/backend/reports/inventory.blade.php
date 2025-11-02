@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Inventory Report')
+{{-- ⬅️ تعريب العنوان: 'Inventory Report' -> 'تقرير المخزون' --}}
+@section('title', __('reports.inventory_report'))
 
 @section('content')
 <div class="card">
@@ -11,21 +12,22 @@
           <table id="datatables" class="table table-hover">
             <thead>
               <tr>
-                <th data-orderable="false">#</th>
-                <th>Name</th>
-                <th>SKU</th>
-                <th>Price</th>
-                <th>Stock</th>
+                {{-- ⬅️ تعريب رؤوس الجدول --}}
+                <th data-orderable="false">{{ __('general.sn') }}</th>
+                <th>{{ __('common.name') }}</th>
+                <th>{{ __('products.sku') }}</th>
+                <th>{{ __('common.price') }}</th>
+                <th>{{ __('products.stock') }}</th>
               </tr>
             </thead>
           </table>
-          <!-- Pagination Links -->
-        </div>
+          </div>
       </div>
     </div>
   </div>
 </div>
 @endsection
+
 @push('style')
 <style>
   .dataTables_length select {
@@ -40,6 +42,7 @@
   }
 </style>
 @endpush
+
 @push('script')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
@@ -60,7 +63,7 @@
       ],
       lengthMenu: [
         [10, 25, 50, 100, -1],
-        [10, 25, 50, 100, "All"]
+        [10, 25, 50, 100, "{{ __('general.all') }}"] // تعريب 'All'
       ],
       ajax: {
         url: "{{ route('backend.admin.inventory.report') }}"
@@ -89,17 +92,20 @@
       dom: 'lBfrtip', // Enables the buttons
       buttons: [{
           extend: 'excel',
-          text: 'Export to Excel',
+          {{-- ⬅️ تعريب زر Excel --}}
+          text: "{{ __('reports.export_excel') }}", 
           className: 'btn'
         },
         {
           extend: 'pdf',
-          text: 'Export to PDF',
+          {{-- ⬅️ تعريب زر PDF --}}
+          text: "{{ __('reports.export_pdf') }}",
           className: 'btn'
         },
         {
           extend: 'print',
-          text: 'Print',
+          {{-- ⬅️ تعريب زر Print --}}
+          text: "{{ __('reports.print') }}",
           className: 'btn'
         }
       ],

@@ -1,6 +1,6 @@
 @extends('backend.master')
 
-@section('title', 'Purchase')
+@section('title', __('purchases.purchases_list')) {{-- تم تعريب 'Purchase' إلى 'قائمة المشتريات' --}}
 
 @section('content')
 <div class="card">
@@ -9,7 +9,7 @@
   <div class="mt-n5 mb-3 d-flex justify-content-end">
     <a href="{{ route('backend.admin.purchase.create') }}" class="btn bg-gradient-primary">
       <i class="fas fa-plus-circle"></i>
-      Add New
+      {{ __('purchases.add_new') }} {{-- تم تعريب 'Add New' --}}
     </a>
   </div>
   @endcan
@@ -21,12 +21,12 @@
             <thead>
               <tr>
                 <th data-orderable="false">#</th>
-                <th>Supplier</th>
-                <th>ID</th>
-                <th>Total {{currency()->symbol??''}}</th>
-                <th>Date</th>
+                <th>{{ __('purchases.supplier') }}</th> {{-- تم تعريب 'Supplier' --}}
+                <th>{{ __('common.id') }}</th> {{-- تم تعريب 'ID' --}}
+                <th>{{ __('purchases.grand_total') }} {{currency()->symbol??''}}</th> {{-- تم تعريب 'Total' إلى 'المجموع الكلي' (الأكثر دقة) --}}
+                <th>{{ __('common.date') }}</th> {{-- تم تعريب 'Date' --}}
                 <th data-orderable="false">
-                  Action
+                  {{ __('common.action') }} {{-- تم تعريب 'Action' --}}
                 </th>
               </tr>
             </thead>
@@ -58,7 +58,6 @@
           data: 'supplier',
           name: 'supplier'
         },
-
         {
           data: 'id',
           name: 'id'
@@ -80,3 +79,4 @@
   });
 </script>
 @endpush
+

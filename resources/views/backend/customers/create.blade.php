@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Create Customer')
+{{-- ⬅️ تعريب العنوان: 'Create Customer' -> 'إنشاء عميل' --}}
+@section('title', __('customers.create_customer')) 
 
 @section('content')
 <div class="card">
@@ -10,38 +11,47 @@
       @csrf
       <div class="card-body">
         <div class="row">
+          
+          {{-- ⬅️ حقل الاسم: يستخدم مفتاح 'name' من common.php --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Name
+              {{ __('common.name') }}
               <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control" placeholder="Enter title" name="name"
+            <input type="text" class="form-control" 
+              placeholder="{{ __('customers.placeholder_name') }}" name="name"
               value="{{ old('name') }}" required>
           </div>
+          
+          {{-- ⬅️ حقل الهاتف: يستخدم مفتاح 'phone' من customers.php --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Phone
+              {{ __('customers.phone') }}
               <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control" placeholder="Enter phone" name="phone"
+            <input type="text" class="form-control" 
+              placeholder="{{ __('customers.placeholder_phone') }}" name="phone"
               value="{{ old('phone') }}" required>
           </div>
+          
+          {{-- ⬅️ حقل العنوان: يستخدم مفتاح 'address' من customers.php --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Address
+              {{ __('customers.address') }}
             </label>
-            <input type="text" class="form-control" placeholder="Enter Address" name="address"
-              value="{{ old('Address') }}">
+            <input type="text" class="form-control" 
+              placeholder="{{ __('customers.placeholder_address') }}" name="address"
+              value="{{ old('address') }}">
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <button type="submit" class="btn bg-gradient-primary">Create</button>
+            {{-- ⬅️ زر الإرسال: يستخدم مفتاح 'create' من common.php --}}
+            <button type="submit" class="btn bg-gradient-primary">{{ __('common.create') }}</button>
           </div>
         </div>
       </div>
-      <!-- /.card-body -->
-    </form>
+      </form>
   </div>
 </div>
 @endsection

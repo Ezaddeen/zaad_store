@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Sale')
+{{-- ⬅️ تعريب العنوان: 'Sale' -> 'المبيعات' --}}
+@section('title', __('orders.sale'))
 
 @section('content')
 <div class="card">
@@ -11,19 +12,27 @@
           <table id="datatables" class="table table-hover">
             <thead>
               <tr>
+                {{-- ⬅️ رؤوس الأعمدة --}}
                 <th data-orderable="false">#</th>
-                <th>SaleId</th>
-                <th>Customer</th>
-                <th>Item</th>
-                <th>Sub Total {{currency()->symbol??''}}</th>
-                <th>Discount {{currency()->symbol??''}}</th>
-                <th>Total {{currency()->symbol??''}}</th>
-                <th>Paid {{currency()->symbol??''}}</th>
-                <th>Due {{currency()->symbol??''}}</th>
-                <th>Status</th>
-                <th data-orderable="false">Action</th>
+                
+                {{-- ⬅️ مفاتيح خاصة بالمبيعات --}}
+                <th>{{ __('orders.sale_id') }}</th>
+                <th>{{ __('orders.customer') }}</th> 
+                <th>{{ __('orders.item') }}</th>
+                
+                {{-- ⬅️ مفاتيح مالية --}}
+                <th>{{ __('orders.sub_total') }} {{currency()->symbol??''}}</th>
+                <th>{{ __('orders.discount') }} {{currency()->symbol??''}}</th>
+                <th>{{ __('common.total') }} {{currency()->symbol??''}}</th>
+                <th>{{ __('orders.paid') }} {{currency()->symbol??''}}</th>
+                <th>{{ __('common.due') }} {{currency()->symbol??''}}</th>
+                
+                {{-- ⬅️ مفاتيح عامة --}}
+                <th>{{ __('common.status') }}</th>
+                <th data-orderable="false">{{ __('common.action') }}</th>
               </tr>
             </thead>
+            {{-- لا تحتاج إلى تعريب هنا لأن البيانات يتم جلبها عبر AJAX --}}
           </table>
         </div>
       </div>
@@ -35,6 +44,7 @@
 @push('script')
 
 <script type="text/javascript">
+  // لا توجد حاجة لتعريب الكود، حيث أن النصوص المعروضة يتم تعريبها في الـ HTML
   $(function() {
     let table = $('#datatables').DataTable({
       processing: true,
@@ -74,12 +84,12 @@
         {
           data: 'total',
           name: 'total'
-        }, 
-         {
+        },
+        {
           data: 'paid',
           name: 'paid'
         },
-         {
+        {
           data: 'due',
           name: 'due'
         },

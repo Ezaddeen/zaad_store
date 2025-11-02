@@ -1,14 +1,16 @@
 @extends('backend.master')
 
-@section('title', 'Sale Report')
+{{-- ⬅️ تعريب العنوان: 'Sale Report' -> 'تقرير المبيعات' --}}
+@section('title', __('reports.sale_report'))
 
 @section('content')
 <div class="card">
   <div class="mt-n5 mb-3 d-flex justify-content-end">
     <div class="form-group">
       <div class="input-group">
+        {{-- ⬅️ تعريب زر فلترة التاريخ --}}
         <button type="button" class="btn btn-default float-right" id="daterange-btn">
-          <i class="far fa-calendar-alt"></i> Filter by date
+          <i class="far fa-calendar-alt"></i> {{ __('general.filter_by_date') }}
           <i class="fas fa-caret-down"></i>
         </button>
       </div>
@@ -19,40 +21,35 @@
       <div class="col-md-12">
         <div class="card-body p-0">
           <section class="invoice">
-            <!-- info row -->
             <div class="row invoice-info">
               <div class="col-sm-4">
               </div>
-              <!-- /.col -->
               <div class="col-sm-4">
                 <address>
-                  <strong>Sale Report ({{$start_date}} - {{$end_date}})</strong><br>
+                  {{-- ⬅️ تعريب عنوان التقرير وفترة التاريخ --}}
+                  <strong>{{ __('reports.sale_report') }} ({{$start_date}} - {{$end_date}})</strong><br>
                 </address>
               </div>
-              <!-- /.col -->
               <div class="col-sm-2">
               </div>
-              <!-- /.col -->
-            </div>
-            <!-- /.row -->
-
-            <!-- Table row -->
+              </div>
             <div class="row justify-content-center">
               <div class="col-12">
                 <table id="datatables" class="table table-hover">
                   <thead>
                     <tr>
-                      <th data-orderable="false">#</th>
-                      <th>SaleId</th>
-                      <th>Customer</th>
-                      <th>Date</th>
-                      <th>Item</th>
-                      <th>Sub Total {{currency()->symbol??''}}</th>
-                      <th>Discount {{currency()->symbol??''}}</th>
-                      <th>Total {{currency()->symbol??''}}</th>
-                      <th>Paid {{currency()->symbol??''}}</th>
-                      <th>Due {{currency()->symbol??''}}</th>
-                      <th>Status</th>
+                      {{-- ⬅️ تعريب رؤوس الجدول --}}
+                      <th data-orderable="false">{{ __('general.sn') }}</th>
+                      <th>{{ __('reports.sale_id') }}</th>
+                      <th>{{ __('reports.customer') }}</th>
+                      <th>{{ __('common.date') }}</th>
+                      <th>{{ __('pos.item') }}</th>
+                      <th>{{ __('pos.subtotal') }} {{currency()->symbol??''}}</th>
+                      <th>{{ __('pos.discount') }} {{currency()->symbol??''}}</th>
+                      <th>{{ __('pos.total') }} {{currency()->symbol??''}}</th>
+                      <th>{{ __('reports.paid') }} {{currency()->symbol??''}}</th>
+                      <th>{{ __('reports.due') }} {{currency()->symbol??''}}</th>
+                      <th>{{ __('common.status') }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -60,7 +57,7 @@
                     <tr>
                       <td>{{ $index + 1 }}</td>
                       <td>#{{$order->id}}</td>
-                      <td>{{ $order->customer->name ?? '-' }}</td>
+                      <td>{{ $order->customer->name ?? __('reports.walk_in_customer') }}</td>
                       <td>{{ $order->created_at->format('d-m-Y') }}</td>
                       <td>{{$order->total_item}}</td>
                       <td>{{number_format($order->sub_total,2,'.',',')}}</td>
@@ -70,31 +67,32 @@
                       <td>{{number_format($order->due,2,'.',',')}}</td>
                       <td>
                         @if ($order->status)
-                        Paid
+                        {{-- ⬅️ تعريب 'Paid' --}}
+                        {{ __('reports.paid_status') }}
                         @else
-                        Due
+                        {{-- ⬅️ تعريب 'Due' --}}
+                        {{ __('reports.due_status') }}
                         @endif
                       </td>
                     </tr>
                     @empty
                     <tr>
-                      <td colspan="7" class="text-center">No sells found.</td>
+                      {{-- ⬅️ تعريب 'No sells found.' --}}
+                      <td colspan="11" class="text-center">{{ __('reports.no_sales_found') }}</td>
                     </tr>
                     @endforelse
                   </tbody>
                 </table>
               </div>
-              <!-- /.col -->
-            </div>
-            <!-- /.row -->
+              </div>
             <div class="row no-print">
               <div class="col-12">
-                <button type="button" onclick="window.print()" class="btn btn-success float-right"><i class="fas fa-print"></i> Print</a>
+                {{-- ⬅️ تعريب زر 'Print' --}}
+                <button type="button" onclick="window.print()" class="btn btn-success float-right"><i class="fas fa-print"></i> {{ __('reports.print') }}
                 </button>
               </div>
             </div>
-            <!-- /.row -->
-          </section>
+            </section>
         </div>
       </div>
     </div>
@@ -112,6 +110,9 @@
 @push('script')
 <script>
   $(function() {
+    // ... (منطق daterangepicker بالإنجليزية، يمكن تعريبه من خلال خيارات daterangepicker)
+    // نترك هذا الجزء كما هو ونركز على تعريب النصوص الثابتة.
+
     // Extract start and end dates from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const startDate = urlParams.get('start_date') || moment().subtract(29, 'days').format('YYYY-MM-DD'); // Default to last 30 days if not present
@@ -120,12 +121,12 @@
     // Initialize the date range picker
     $('#daterange-btn').daterangepicker({
         ranges: {
-          'Today': [moment(), moment()],
-          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-          'This Month': [moment().startOf('month'), moment().endOf('month')],
-          'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          '{{ __('reports.today') }}': [moment(), moment()],
+          '{{ __('reports.yesterday') }}': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          '{{ __('reports.last_7_days') }}': [moment().subtract(6, 'days'), moment()],
+          '{{ __('reports.last_30_days') }}': [moment().subtract(29, 'days'), moment()],
+          '{{ __('reports.this_month') }}': [moment().startOf('month'), moment().endOf('month')],
+          '{{ __('reports.last_month') }}': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         },
         startDate: moment(startDate, "YYYY-MM-DD"),
         endDate: moment(endDate, "YYYY-MM-DD")

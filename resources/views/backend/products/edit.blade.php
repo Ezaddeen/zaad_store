@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Update Product')
+{{-- ⬅️ تعريب العنوان: 'Update Product' -> 'تحديث المنتج' --}}
+@section('title', __('products.update_product'))
 
 @section('content')
 <div class="card">
@@ -11,29 +12,35 @@
       @method('PUT')
       <div class="card-body">
         <div class="row">
+          
+          {{-- ⬅️ الاسم --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Name
+              {{ __('common.name') }}
               <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control" placeholder="Enter title" name="name"
+            <input type="text" class="form-control" placeholder="{{ __('products.placeholder_name') }}" name="name"
               value="{{ old('name', $product->name) }}" required>
           </div>
+          
+          {{-- ⬅️ رمز التخزين (SKU) --}}
           <div class="mb-3 col-md-6">
             <label for="sku" class="form-label">
-              Sku
+              {{ __('products.sku') }}
               <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control" placeholder="Enter sku" name="sku"
+            <input type="text" class="form-control" placeholder="{{ __('products.placeholder_sku') }}" name="sku"
               value="{{ old('sku',$product->sku)}}" required>
           </div>
+          
+          {{-- ⬅️ العلامة التجارية (Brand) --}}
           <div class="mb-3 col-md-6">
             <label for="brand_id" class="form-label">
-              Brand
+              {{ __('products.brand') }}
               <span class="text-danger">*</span>
             </label>
             <select class="form-control select2" style="width: 100%;" name="brand_id" required>
-              <option value="">Select Brand</option>
+              <option value="">{{ __('products.select_brand') }}</option>
               @foreach ($brands as $item)
               <option value={{ $item->id }}
                 {{ $product->brand_id == $item->id ? 'selected' : '' }}>
@@ -42,13 +49,15 @@
               @endforeach
             </select>
           </div>
+          
+          {{-- ⬅️ الفئة (Category) --}}
           <div class="mb-3 col-md-6">
             <label for="category_id" class="form-label">
-              Category
+              {{ __('products.category') }}
               <span class="text-danger">*</span>
             </label>
             <select class="form-control select2" style="width: 100%;" name="category_id" required>
-              <option value="">Select Category</option>
+              <option value="">{{ __('products.select_category') }}</option>
               @foreach ($categories as $item)
               <option value={{ $item->id }}
                 {{ $product->category_id == $item->id ? 'selected' : '' }}>
@@ -57,21 +66,25 @@
               @endforeach
             </select>
           </div>
+          
+          {{-- ⬅️ سعر البيع (Price) --}}
           <div class="mb-3 col-md-6">
             <label for="price" class="form-label">
-              Price
+              {{ __('common.price') }}
               <span class="text-danger">*</span>
             </label>
             <input type="number" step="0.01" min="0" class="form-control"
-              placeholder="Enter price" name="price" value="{{ old('price',$product->price) }}" required>
+              placeholder="{{ __('products.placeholder_price') }}" name="price" value="{{ old('price',$product->price) }}" required>
           </div>
+          
+          {{-- ⬅️ الوحدة (Unit) --}}
           <div class="mb-3 col-md-6">
             <label for="unit_id" class="form-label">
-              Unit
+              {{ __('products.unit') }}
               <span class="text-danger">*</span>
             </label>
             <select class="form-control" style="width: 100%;" name="unit_id" required>
-              <option value="">Select Unit</option>
+              <option value="">{{ __('products.select_unit') }}</option>
               @foreach ($units as $item)
               <option value={{ $item->id }}
                 {{ $product->unit_id == $item->id ? 'selected' : '' }}>
@@ -80,94 +93,100 @@
               @endforeach
             </select>
           </div>
-          <!-- <div class="mb-3 col-md-6">
-          <label for="quantity" class="form-label">
-            Initial Stock
-            <span class="text-danger">*</span>
-          </label>
-          <input type="number" class="form-control" placeholder="Enter quantity" name="quantity"
-            value="{{ old('quantity',$product->quantity) }}" required>
-        </div> -->
+          
+          {{-- ⬅️ نوع الخصم (Discount Type) --}}
           <div class="mb-3 col-md-6">
             <label for="discount_type" class="form-label">
-              Discount Type
+              {{ __('products.discount_type') }}
             </label>
             <select class="form-control form-select" name="discount_type">
-              <option value="">Select Discount Type</option>
+              <option value="">{{ __('products.select_discount_type') }}</option>
               <option value="fixed" {{ $product->discount_type == 'fixed' ? 'selected' : '' }}>
-                Fixed
+                {{ __('products.fixed') }}
               </option>
               <option value="percentage"
                 {{ $product->discount_type  == 'percentage' ? 'selected' : '' }}>
-                Percentage
+                {{ __('products.percentage') }}
               </option>
             </select>
           </div>
+          
+          {{-- ⬅️ قيمة الخصم (Discount Amount) --}}
           <div class="mb-3 col-md-6">
             <label for="discount_value" class="form-label">
-              Discount Amount
+              {{ __('products.discount_amount') }}
             </label>
             <input type="number" step="0.01" min="0" class="form-control"
-              placeholder="Enter discount" name="discount" value="{{ old('discount',$product->discount) }}">
+              placeholder="{{ __('products.placeholder_discount') }}" name="discount" value="{{ old('discount',$product->discount) }}">
           </div>
+          
+          {{-- ⬅️ سعر الشراء (Purchase Price) --}}
           <div class="mb-3 col-md-6">
             <label for="purchase_price" class="form-label">
-              Purchase Price
+              {{ __('products.purchase_price') }}
               <span class="text-danger">*</span>
             </label>
             <input type="number" step="0.01" min="0" class="form-control"
-              placeholder="Enter purchase Price" name="purchase_price" value="{{ old('purchase_price',$product->purchase_price) }}" required>
+              placeholder="{{ __('products.placeholder_purchase_price') }}" name="purchase_price" value="{{ old('purchase_price',$product->purchase_price) }}" required>
           </div>
+          
+          {{-- ⬅️ الصورة (Image) --}}
           <div class="mb-3 col-md-6">
             <label for="thumbnailInput" class="form-label">
-              Image
+              {{ __('common.image') }}
             </label>
             <div class="image-upload-container" id="imageUploadContainer">
               <input type="file" class="form-control" name="product_image" id="thumbnailInput" accept="image/*" style="display: none;">
               <div class="thumb-preview" id="thumbPreviewContainer">
-                <img src="{{ asset('storage/' . $product->image) }}" alt="Thumbnail Preview"
+                {{-- يتم عرض الصورة الموجودة أو صورة بديلة عند وجود خطأ --}}
+                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ __('general.image_preview') }}"
                   class="img-thumbnail" id="thumbnailPreview" onerror="this.onerror=null; this.src='{{ asset('assets/images/no-image.png') }}'">
                 <div class="upload-text d-none">
                   <i class="fas fa-plus-circle"></i>
-                  <span>Upload Image</span>
+                  <span>{{ __('general.upload_image') }}</span>
                 </div>
               </div>
             </div>
           </div>
 
+          {{-- ⬅️ الوصف (Description) --}}
           <div class="mb-3 col-md-12">
             <label for="description" class="form-label">
-              Description
+              {{ __('products.description') }}
             </label>
-            <textarea class="form-control" placeholder="Enter description" name="description">{{ old('description',$product->description) }}</textarea>
+            <textarea class="form-control" placeholder="{{ __('products.placeholder_description') }}" name="description">{{ old('description',$product->description) }}</textarea>
           </div>
 
+          {{-- ⬅️ تاريخ انتهاء الصلاحية (Expire Date) --}}
           <div class="mb-3 col-md-6">
             <label for="expire_date" class="form-label">
-              Expire date
+              {{ __('products.expire_date') }}
             </label>
-
             <div class="input-group date" id="reservationdate" data-target-input="nearest">
-              <input type="text" placeholder="Enter product expire date" class="form-control datetimepicker-input" data-target="#reservationdate" name="expire_date" value="{{ old('expire_date',$product->expire_date) }}" />
+              <input type="text" placeholder="{{ __('products.placeholder_expire_date') }}" class="form-control datetimepicker-input" data-target="#reservationdate" name="expire_date" value="{{ old('expire_date',$product->expire_date) }}" />
               <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
               </div>
             </div>
           </div>
+          
+          {{-- ⬅️ الحالة (Status) --}}
           <div class="mb-3 col-md-12">
             <div class="form-switch px-4">
               <input type="hidden" name="status" value="0">
               <input class="form-check-input" type="checkbox" name="status" id="active"
                 value="1" @if($product->status==1) checked @endif>
               <label class="form-check-label" for="active">
-                Active
+                {{ __('common.active') }}
               </label>
             </div>
           </div>
+          
         </div>
         <div class="row">
           <div class="col-md-6">
-            <button type="submit" class="btn bg-gradient-primary">Update</button>
+            {{-- ⬅️ زر الإرسال: 'Update' -> 'تحديث' --}}
+            <button type="submit" class="btn bg-gradient-primary">{{ __('common.update') }}</button>
           </div>
         </div>
       </div>

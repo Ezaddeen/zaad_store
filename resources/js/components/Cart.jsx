@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
 import SuccessSound from "../sounds/beep-07a.mp3";
@@ -9,40 +9,38 @@ import playSound from "../utils/playSound";
 export default function Cart({ carts, setCartUpdated, cartUpdated }) {
     function increment(id) {
         axios
-            .put("/admin/cart/increment", {
-                id: id,
-            })
+            .put("/admin/cart/increment", { id })
             .then((res) => {
                 setCartUpdated(!cartUpdated);
                 playSound(SuccessSound);
-                toast.success(res?.data?.message);
+                toast.success(res?.data?.message || "تمت زيادة الكمية بنجاح"); // تم إزالة النجمات
             })
             .catch((err) => {
                 playSound(WarningSound);
-                toast.error(err.response.data.message);
+                toast.error(err.response?.data?.message || "حدث خطأ أثناء زيادة الكمية"); // تم إزالة النجمات
             });
     }
+
     function decrement(id) {
         axios
-            .put("/admin/cart/decrement", {
-                id: id,
-            })
+            .put("/admin/cart/decrement", { id })
             .then((res) => {
                 setCartUpdated(!cartUpdated);
                 playSound(SuccessSound);
-                toast.success(res?.data?.message);
+                toast.success(res?.data?.message || "تم تقليل الكمية بنجاح"); // تم إزالة النجمات
             })
             .catch((err) => {
                 playSound(WarningSound);
-                toast.error(err.response.data.message);
+                toast.error(err.response?.data?.message || "حدث خطأ أثناء تقليل الكمية"); // تم إزالة النجمات
             });
     }
+
     function destroy(id) {
         Swal.fire({
-            title: "Are you sure you want to delete this item?",
+            title: "هل أنت متأكد أنك تريد حذف هذا المنتج؟", // تم إزالة النجمات
             showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: "No",
+            confirmButtonText: "نعم", // تم إزالة النجمات
+            denyButtonText: "لا", // تم إزالة النجمات
             customClass: {
                 actions: "my-actions",
                 cancelButton: "order-1 right-gap",
@@ -52,103 +50,121 @@ export default function Cart({ carts, setCartUpdated, cartUpdated }) {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios
-                    .put("/admin/cart/delete", {
-                        id: id,
-                    })
+                    .put("/admin/cart/delete", { id })
                     .then((res) => {
-                        console.log(res);
                         setCartUpdated(!cartUpdated);
                         playSound(SuccessSound);
-                        toast.success(res?.data?.message);
+                        toast.success(res?.data?.message || "تم حذف المنتج بنجاح"); // تم إزالة النجمات
                     })
                     .catch((err) => {
-                        toast.error(err.response.data.message);
+                        playSound(WarningSound);
+                        toast.error(err.response?.data?.message || "حدث خطأ أثناء الحذف"); // تم إزالة النجمات
                     });
-            } else if (result.isDenied) {
-                return;
             }
         });
     }
+
     return (
         <>
+            <style>
+                {`
+                .user-cart {
+                    direction: rtl;
+                    text-align: right;
+                }
+                .user-cart table {
+                    direction: rtl;
+                }
+                .user-cart th, .user-cart td {
+                    text-align: center;
+                    vertical-align: middle;
+                }
+                `}
+            </style>
+
             <div className="user-cart">
                 <div className="card">
                     <div className="card-body">
                         <div className="responsive-table">
-                            <table className="table table-striped">
+                            <table className="table table-striped text-center">
                                 <thead>
-                                    <tr className="text-center">
-                                        <th>Name</th>
-                                        <th>Quantity</th>
-                                        <th></th>
-                                        <th>Price</th>
-                                        <th>Total</th>
+                                    <tr>
+                                        {/* الترتيب من اليمين لليسار */}
+                                        <th>المنتج</th> {/* تم إزالة النجمات */}
+                                        <th>الكمية</th> {/* تم إزالة النجمات */}
+                                        <th>السعر</th> {/* تم إزالة النجمات */}
+                                        <th>الإجمالي</th> {/* تم إزالة النجمات */}
+                                        <th>إجراء</th> {/* تم إزالة النجمات */}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {carts.map((item) => (
                                         <tr key={item.id}>
+                                            {/* المنتج (الاسم) */}
                                             <td>{item.product.name}</td>
-                                            <td className="d-flex align-items-center">
+                                            
+                                            {/* الكمية (مع الأزرار) */}
+                                            <td className="d-flex align-items-center justify-content-center">
                                                 <button
                                                     className="btn btn-warning btn-sm"
-                                                    onClick={() =>
-                                                        decrement(item.id)
-                                                    }
+                                                    onClick={() => decrement(item.id)}
+                                                    title="تقليل الكمية"
                                                 >
                                                     <i className="fas fa-minus"></i>
                                                 </button>
                                                 <input
                                                     type="number"
-                                                    className="form-control form-control-sm qty ml-1 mr-1"
+                                                    className="form-control form-control-sm qty mx-2 text-center"
                                                     value={item.quantity}
                                                     disabled
                                                 />
                                                 <button
                                                     className="btn btn-success btn-sm"
-                                                    onClick={() =>
-                                                        increment(item.id)
-                                                    }
+                                                    onClick={() => increment(item.id)}
+                                                    title="زيادة الكمية"
                                                 >
-                                                    <i className="fas fa-plus "></i>
+                                                    <i className="fas fa-plus"></i>
                                                 </button>
                                             </td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-danger btn-sm mr-3"
-                                                    onClick={() =>
-                                                        destroy(item.id)
-                                                    }
-                                                >
-                                                    <i className="fas fa-trash "></i>
-                                                </button>
-                                            </td>
+
+                                            {/* السعر */}
                                             <td className="text-right">
-                                                {item?.product?.discounted_price}
-                                                {item?.product?.price >
-                                                item?.product
-                                                    ?.discounted_price ? (
+                                                {item?.product?.discounted_price} ر.س {/* تم إزالة النجمات */}
+                                                {item?.product?.price > item?.product?.discounted_price && (
                                                     <>
                                                         <br />
-                                                        <del>
-                                                            {item?.product?.price}
-                                                        </del>
+                                                        <del>{item?.product?.price} ر.س</del> {/* تم إزالة النجمات */}
                                                     </>
-                                                ) : (
-                                                    ""
                                                 )}
                                             </td>
+                                            
+                                            {/* الإجمالي */}
                                             <td className="text-right">
-                                                {item?.row_total}
+                                                {item?.row_total} ر.س {/* تم إزالة النجمات */}
+                                            </td>
+
+                                            {/* الإجراء (الحذف) */}
+                                            <td>
+                                                <button
+                                                    className="btn btn-danger btn-sm"
+                                                    onClick={() => destroy(item.id)}
+                                                    title="حذف المنتج"
+                                                >
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
+                            {carts.length === 0 && (
+                                <p className="text-center mt-3">لا توجد منتجات في السلة</p> // تم إزالة النجمات
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+
             <Toaster position="top-right" reverseOrder={false} />
         </>
     );

@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Collection')
+{{-- ⬅️ تعريب العنوان: 'Collection' -> 'تحصيل المستحقات' --}}
+@section('title', __('orders.collection')) 
 
 @section('content')
 <div class="card">
@@ -9,40 +10,54 @@
       @csrf
       <div class="card-body">
         <div class="row">
+          
+          {{-- ⬅️ اسم العميل: يستخدم مفتاح 'name' من common.php --}}
           <div class="mb-3 col-md-3">
             <label for="title" class="form-label">
-              Name
+              {{ __('common.name') }}
             </label>
             <p>{{$order->customer->name}}</p>
           </div>
+          
+          {{-- ⬅️ رقم الطلب: يستخدم مفتاح 'order' من orders.php --}}
           <div class="mb-3 col-md-3">
             <label for="title" class="form-label">
-              Order
+              {{ __('orders.order') }}
             </label>
             <p># {{$order->id}}</p>
           </div>
+          
+          {{-- ⬅️ الإجمالي: يستخدم مفتاح 'total' من orders.php --}}
           <div class="mb-3 col-md-3">
             <label for="title" class="form-label">
-              Total
+              {{ __('orders.total') }}
             </label>
             <p>{{$order->total}}</p>
           </div>
+          
+          {{-- ⬅️ المستحق (المتبقي): يستخدم مفتاح 'due' من orders.php --}}
           <div class="mb-3 col-md-3">
             <label for="title" class="form-label">
-              Due
+              {{ __('orders.due') }}
             </label>
             <p>{{$order->due}}</p>
           </div>
+          
+          {{-- ⬅️ مبلغ التحصيل (المدفوع الآن) --}}
           <div class="mb-3 col-md-6">
             <label for="title" class="form-label">
-              Collection Amount <span class="text-danger">*</span>
+              {{ __('orders.collection_amount') }} <span class="text-danger">*</span>
             </label>
-            <input type="number" class="form-control" placeholder="Enter amount" value="{{$order->due}}" name="amount" required min="1" max="{{$order->due}}">
+            <input type="number" class="form-control" 
+              placeholder="{{ __('orders.placeholder_amount') }}" 
+              value="{{$order->due}}" name="amount" required min="1" max="{{$order->due}}">
           </div>
+          
         </div>
         <div class="row">
           <div class="col-md-6">
-            <button type="submit" class="btn bg-gradient-primary">Submit</button>
+            {{-- ⬅️ زر الإرسال: يستخدم مفتاح 'submit' من common.php --}}
+            <button type="submit" class="btn bg-gradient-primary">{{ __('common.submit') }}</button>
           </div>
         </div>
       </div>

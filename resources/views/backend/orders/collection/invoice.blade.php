@@ -1,74 +1,76 @@
 @extends('backend.master')
-@section('title', 'Collection_Invoice_'.$transaction->id)
+
+{{-- ⬅️ تعريب العنوان: 'Collection_Invoice_#...' -> 'فاتورة_تحصيل_#...' --}}
+@section('title', __('invoices.collection_invoice_title') . '_' . $transaction->id)
+
 @section('content')
 <div class="card">
   <div class="card-body">
-    <!-- Main content -->
     <section class="invoice">
-      <!-- title row -->
       <div class="row mb-4">
         <div class="col-4">
           <h2 class="page-header">
-            <img src="{{ assetImage(readconfig('site_logo')) }}" height="40" width="40" alt="Logo"
+            <img src="{{ assetImage(readconfig('site_logo')) }}" height="40" width="40" alt="{{ __('general.site_logo') }}"
               class="brand-image img-circle elevation-3" style="opacity: .8"> {{ readConfig('site_name') }}
           </h2>
         </div>
         <div class="col-4">
-          <h4 class="page-header">Collection Invoice</h4>
+          {{-- ⬅️ تعريب عنوان الفاتورة --}}
+          <h4 class="page-header">{{ __('invoices.collection_invoice') }}</h4>
         </div>
         <div class="col-4">
-          <small class="float-right text-small">Date: {{date('d/m/Y')}}</small>
+          {{-- ⬅️ تعريب كلمة 'Date' --}}
+          <small class="float-right text-small">{{ __('general.date') }}: {{date('d/m/Y')}}</small>
         </div>
-        <!-- /.col -->
-      </div>
-      <!-- info row -->
+        </div>
       <div class="row invoice-info mb-2">
-        <!-- /.col -->
         <div class="col-sm-5 invoice-col">
           @if(readConfig('is_show_customer_invoice'))
-          To
+          {{-- ⬅️ تعريب كلمة 'To' --}}
+          {{ __('invoices.to') }}
           <address>
-            <strong>Name: {{$order->customer->name??"N/A"}}</strong><br>
-            Address: {{$order->customer->address??"N/A"}}<br>
-            Phone: {{$order->customer->phone??"N/A"}}<br>
+            {{-- ⬅️ تعريب 'Name', 'Address', 'Phone' --}}
+            <strong>{{ __('common.name') }}: {{$order->customer->name??"N/A"}}</strong><br>
+            {{ __('customers.address') }}: {{$order->customer->address??"N/A"}}<br>
+            {{ __('customers.phone') }}: {{$order->customer->phone??"N/A"}}<br>
           </address>
           @endif
         </div>
-        <!-- /.col -->
         <div class="col-sm-4 invoice-col">
-          From
+          {{-- ⬅️ تعريب كلمة 'From' --}}
+          {{ __('invoices.from') }}
           <address>
-            @if(readConfig('is_show_site_invoice'))<strong>Name:{{ readConfig('site_name') }}</strong><br> @endif
-            @if(readConfig('is_show_address_invoice'))Address: {{ readConfig('contact_address') }}<br>@endif
-            @if(readConfig('is_show_phone_invoice'))Phone: {{ readConfig('contact_phone') }}<br>@endif
-            @if(readConfig('is_show_email_invoice'))Email: {{ readConfig('contact_email') }}<br>@endif
+            {{-- ⬅️ تعريب 'Name', 'Address', 'Phone', 'Email' --}}
+            @if(readConfig('is_show_site_invoice'))<strong>{{ __('common.name') }}:{{ readConfig('site_name') }}</strong><br> @endif
+            @if(readConfig('is_show_address_invoice')){{ __('customers.address') }}: {{ readConfig('contact_address') }}<br>@endif
+            @if(readConfig('is_show_phone_invoice')){{ __('customers.phone') }}: {{ readConfig('contact_phone') }}<br>@endif
+            @if(readConfig('is_show_email_invoice')){{ __('general.email') }}: {{ readConfig('contact_email') }}<br>@endif
           </address>
         </div>
         <div class="col-sm-3 invoice-col">
-          Info <br>
-          Invoice ID #{{$transaction->id}}<br>
-          Sale ID #{{$order->id}}<br>
-          Sale Date: {{date('d/m/Y', strtotime($order->created_at))}}<br>
-          Collection Date: {{date('d/m/Y', strtotime($transaction->created_at))}}<br>
-          <!-- <br>
-          <b>Payment Due:</b> 2/22/2014<br>
-          <b>Account:</b> 968-34567 -->
+          {{-- ⬅️ تعريب 'Info' --}}
+          {{ __('invoices.info') }} <br>
+          {{-- ⬅️ تعريب 'Invoice ID' --}}
+          {{ __('invoices.invoice_id') }} #{{$transaction->id}}<br>
+          {{-- ⬅️ تعريب 'Sale ID' --}}
+          {{ __('orders.sale_id') }} #{{$order->id}}<br>
+          {{-- ⬅️ تعريب 'Sale Date' --}}
+          {{ __('orders.sale_date') }}: {{date('d/m/Y', strtotime($order->created_at))}}<br>
+          {{-- ⬅️ تعريب 'Collection Date' --}}
+          {{ __('orders.collection_date') }}: {{date('d/m/Y', strtotime($transaction->created_at))}}<br>
         </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-
-      <!-- Table row -->
+        </div>
       <div class="row">
         <div class="col-12 table-responsive">
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>SN</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price {{currency()->symbol??''}}</th>
-                <th>Subtotal {{currency()->symbol??''}}</th>
+                {{-- ⬅️ تعريب رؤوس الجدول --}}
+                <th>{{ __('general.sn') }}</th>
+                <th>{{ __('products.product') }}</th>
+                <th>{{ __('common.quantity') }}</th>
+                <th>{{ __('common.price') }} {{currency()->symbol??''}}</th>
+                <th>{{ __('orders.subtotal') }} {{currency()->symbol??''}}</th>
               </tr>
             </thead>
             <tbody>
@@ -89,64 +91,60 @@
             </tbody>
           </table>
         </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-
+        </div>
       <div class="row">
-        <!-- accepted payments column -->
         <div class="col-6">
-          <!-- <p class="lead">Payment:Cash Paid</p> -->
-          <!-- <small class="lead text-small text-bold">Payment:Cash Paid</small> -->
           <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+            {{-- ⬅️ رسالة للمتعامل: يتم قراءتها من الكونفيج --}}
             @if(readConfig('is_show_note_invoice')){{ readConfig('note_to_customer_invoice') }}@endif
           </p>
         </div>
-        <!-- /.col -->
         <div class="col-6">
-          <!-- <p class="lead">Amount Due 2/22/2014</p> -->
-
           <div class="table-responsive">
             <table class="table">
               <tr>
-                <th style="width:50%">Subtotal:</th>
+                {{-- ⬅️ تعريب 'Subtotal' --}}
+                <th style="width:50%">{{ __('orders.subtotal') }}:</th>
                 <td class="text-right">{{currency()->symbol.' '.number_format($order->sub_total,2,'.',',')}}</td>
               </tr>
               <tr>
-                <th>Discount:</th>
+                {{-- ⬅️ تعريب 'Discount' --}}
+                <th>{{ __('orders.discount') }}:</th>
                 <td class="text-right">{{currency()->symbol.' '.number_format($order->discount,2,'.',',')}}</td>
               </tr>
               <tr>
-                <th>Total:</th>
+                {{-- ⬅️ تعريب 'Total' --}}
+                <th>{{ __('orders.total') }}:</th>
                 <td class="text-right">{{currency()->symbol.' '.number_format($order->total,2,'.',',')}}</td>
               </tr>
               <tr>
-                <th>Previously Paid:</th>
+                {{-- ⬅️ تعريب 'Previously Paid' --}}
+                <th>{{ __('orders.previously_paid') }}:</th>
                 <td class="text-right">{{currency()->symbol.' '.number_format($order->paid - $collection_amount,2,'.',',')}}</td>
               </tr>
               <tr>
-                <th>Collection Amount:</th>
+                {{-- ⬅️ تعريب 'Collection Amount' --}}
+                <th>{{ __('orders.collection_amount') }}:</th>
                 <td class="text-right">{{currency()->symbol.' '.number_format($collection_amount,2,'.',',')}}</td>
               </tr>
               <tr>
-                <th>Due:</th>
+                {{-- ⬅️ تعريب 'Due' --}}
+                <th>{{ __('orders.due') }}:</th>
                 <td class="text-right">{{currency()->symbol.' '.number_format($order->due,2,'.',',')}}</td>
               </tr>
             </table>
           </div>
         </div>
-        <!-- /.col -->
-      </div>
+        </div>
       <div class="row no-print">
         <div class="col-12">
-          <button type="button" onclick="window.print()" class="btn btn-success float-right"><i class="fas fa-print"></i> Print</a>
+          {{-- ⬅️ تعريب زر الطباعة: 'Print' -> 'طباعة' --}}
+          <button type="button" onclick="window.print()" class="btn btn-success float-right"><i class="fas fa-print"></i> {{ __('general.print') }}</a>
           </button>
         </div>
       </div>
-      <!-- /.row -->
-    </section>
-    <!-- /.content -->
-  </div>
+      </section>
+    </div>
 </div>
 @endsection
 
@@ -159,6 +157,7 @@
 @endpush
 @push('script')
 <script>
+  // يضمن فتح نافذة الطباعة تلقائيًا
   window.addEventListener("load", window.print());
 </script>
 @endpush

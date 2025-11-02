@@ -1,48 +1,63 @@
 @extends('backend.master')
 
-@section('title', 'Create Supplier')
+{{-- استخدام دالة الترجمة لعنوان الصفحة --}}
+@section('title', __('supplier.create_supplier'))
 
 @section('content')
-<div class="card">
-  <div class="card-body">
-    <form action="{{ route('backend.admin.suppliers.store') }}" method="post" class="accountForm"
-      enctype="multipart/form-data">
-      @csrf
-      <div class="card-body">
-        <div class="row">
-          <div class="mb-3 col-md-6">
-            <label for="title" class="form-label">
-              Name
-              <span class="text-danger">*</span>
-            </label>
-            <input type="text" class="form-control" placeholder="Enter title" name="name"
-              value="{{ old('name') }}" required>
-          </div>
-          <div class="mb-3 col-md-6">
-            <label for="title" class="form-label">
-              Phone
-              <span class="text-danger">*</span>
-            </label>
-            <input type="text" class="form-control" placeholder="Enter phone" name="phone"
-              value="{{ old('phone') }}" required>
-          </div>
-          <div class="mb-3 col-md-6">
-            <label for="title" class="form-label">
-              Address
-            </label>
-            <input type="text" class="form-control" placeholder="Enter Address" name="address"
-              value="{{ old('Address') }}">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <button type="submit" class="btn btn-md bg-gradient-primary">Create</button>
-          </div>
-        </div>
-      </div>
-      <!-- /.card-body -->
-    </form>
-  </div>
+{{-- يمكن إضافة dir="rtl" هنا إذا لم يكن في الـ master layout --}}
+<div class="card"> 
+    <div class="card-body">
+        <form action="{{ route('backend.admin.suppliers.store') }}" method="post" class="accountForm"
+            enctype="multipart/form-data">
+            @csrf
+            <div class="card-body">
+                <div class="row">
+
+                    {{-- حقل الاسم --}}
+                    <div class="mb-3 col-md-6">
+                        {{-- استخدام دالة الترجمة للنص Label --}}
+                        <label for="name" class="form-label">
+                            @lang('supplier.name')
+                            <span class="text-danger">*</span>
+                        </label>
+                        {{-- استخدام دالة الترجمة للنص Placeholder --}}
+                        <input type="text" class="form-control" placeholder="@lang('supplier.enter_name')" name="name"
+                            value="{{ old('name') }}" required>
+                    </div>
+
+                    {{-- حقل الهاتف --}}
+                    <div class="mb-3 col-md-6">
+                        {{-- استخدام دالة الترجمة للنص Label --}}
+                        <label for="phone" class="form-label">
+                            @lang('supplier.phone')
+                            <span class="text-danger">*</span>
+                        </label>
+                        {{-- استخدام دالة الترجمة للنص Placeholder --}}
+                        <input type="text" class="form-control" placeholder="@lang('supplier.enter_phone')" name="phone"
+                            value="{{ old('phone') }}" required>
+                    </div>
+
+                    {{-- حقل العنوان --}}
+                    <div class="mb-3 col-md-6">
+                        {{-- استخدام دالة الترجمة للنص Label --}}
+                        <label for="address" class="form-label">
+                            @lang('supplier.address')
+                        </label>
+                        {{-- استخدام دالة الترجمة للنص Placeholder --}}
+                        <input type="text" class="form-control" placeholder="@lang('supplier.enter_address')" name="address"
+                            value="{{ old('address') }}">
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{-- استخدام دالة الترجمة لزر الإرسال --}}
+                        <button type="submit" class="btn btn-md bg-gradient-primary">@lang('supplier.create')</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection
 @push('script')

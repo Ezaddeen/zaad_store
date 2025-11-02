@@ -4,11 +4,12 @@ import axios from "axios";
 
 const CustomerSelect = ({ setCustomerId }) => {
     const [customers, setCustomers] = useState([]);
-    const [selectedCustomer, setSelectedCustomer] = useState({value:1,label:"Walking Customer"});
+    // 1. تعريب القيمة الافتراضية
+    const [selectedCustomer, setSelectedCustomer] = useState({value:1,label:"عميل عابر"}); 
 
     // Fetch existing customers from the backend
     useEffect(() => {
-      axios.get("/admin/get/customers").then((response) => {
+        axios.get("/admin/get/customers").then((response) => {
             const customerOptions = response?.data?.map((customer) => ({
                 value: customer.id,
                 label: customer.name,
@@ -16,9 +17,10 @@ const CustomerSelect = ({ setCustomerId }) => {
             setCustomers(customerOptions);
         });
     }, []);
-  useEffect(() => {
-    setCustomerId(selectedCustomer?.value);
-  }, [selectedCustomer]);
+    
+    useEffect(() => {
+        setCustomerId(selectedCustomer?.value);
+    }, [selectedCustomer]);
 
     const handleCreateCustomer = (inputValue) => {
         axios
@@ -48,7 +50,36 @@ const CustomerSelect = ({ setCustomerId }) => {
             onChange={handleChange}
             onCreateOption={handleCreateCustomer} // Handle creating a new customer
             value={selectedCustomer}
-            placeholder="Select or create customer"
+            // 2. تعريب النص النائب (Placeholder)
+            placeholder="اختر أو أنشئ عميلاً" 
+            
+            // 3. تعريب رسائل CreatableSelect المدمجة
+            formatCreateLabel={(inputValue) => `إنشاء عميل "${inputValue}"`}
+            noOptionsMessage={() => "لا توجد خيارات"}
+            
+            // لتصحيح اتجاه الكتابة والقراءة داخل المكون
+            styles={{
+                 container: (provided) => ({
+                    ...provided,
+                    direction: 'rtl',
+                    textAlign: 'right',
+                }),
+                input: (provided) => ({
+                    ...provided,
+                    direction: 'rtl',
+                    textAlign: 'right',
+                }),
+                placeholder: (provided) => ({
+                    ...provided,
+                    direction: 'rtl',
+                    textAlign: 'right',
+                }),
+                singleValue: (provided) => ({
+                    ...provided,
+                    direction: 'rtl',
+                    textAlign: 'right',
+                }),
+            }}
         />
     );
 };

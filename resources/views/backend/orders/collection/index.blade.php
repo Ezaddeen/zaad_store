@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Transactions Sale #'.$order->id)
+{{-- ⬅️ تعريب العنوان: 'Transactions Sale #' -> 'معاملات طلب البيع رقم' --}}
+@section('title', __('orders.transactions_title') . ' #' . $order->id)
 
 @section('content')
 <div class="card">
@@ -11,11 +12,13 @@
           <table id="datatables" class="table table-hover">
             <thead>
               <tr>
+                {{-- ⬅️ رؤوس الأعمدة --}}
                 <th data-orderable="false">#</th>
-                <th>TransactionId</th>
-                <th>Amount {{currency()->symbol??''}}</th>
-                <th>Paid By</th>
-                <th>Created</th>
+                
+                <th>{{ __('transactions.transaction_id') }}</th>
+                <th>{{ __('common.amount') }} {{currency()->symbol??''}}</th>
+                <th>{{ __('transactions.paid_by') }}</th>
+                <th>{{ __('common.created_at') }}</th>
                 <th></th>
               </tr>
             </thead>
@@ -28,12 +31,14 @@
                 <td>{{$transaction->paid_by}}</td>
                 <td>{{ $transaction->created_at->format('M-d Y, h:i A') }}</td>
                 <td>
-                  <a class="btn btn-success btn-sm" href="{{route('backend.admin.collectionInvoice',$transaction->id)}}">Invoice</a>
+                  {{-- ⬅️ تعريب زر الفاتورة: 'Invoice' -> 'فاتورة' --}}
+                  <a class="btn btn-success btn-sm" href="{{route('backend.admin.collectionInvoice',$transaction->id)}}">{{ __('general.invoice') }}</a>
                 </td>
               </tr>
               @empty
               <tr>
-                <td colspan="5" class="text-center">No transaction found.</td>
+                {{-- ⬅️ تعريب رسالة عدم وجود معاملات: 'No transaction found.' -> 'لم يتم العثور على أي معاملات.' --}}
+                <td colspan="6" class="text-center">{{ __('transactions.no_transactions') }}</td>
               </tr>
               @endforelse
             </tbody>

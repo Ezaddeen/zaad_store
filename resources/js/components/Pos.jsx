@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback } from "react";
+﻿import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Cart from "./Cart";
@@ -26,54 +26,56 @@ export default function Pos() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
-    const fullDomainWithPort = `${protocol}//${hostname}${
-        port ? `:${port}` : ""
-    }`;
-    const getProducts = useCallback(
-        async (search = "", page = 1, barcode = "") => {
-            setLoading(true);
-            try {
-                const res = await axios.get('/admin/get/products', {
-                    params: { search, page, barcode },
-                });
-                const productsData = res.data;
-                setProducts((prev) => [...prev, ...productsData.data]); // Append new products
-                if (productsData.data.length === 1 && barcode != "") {
-                    addProductToCart(productsData.data[0].id);
-                    getCarts();
-                }
-                setTotalPages(productsData.meta.last_page); // Get total pages
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            } finally {
-                setLoading(false); // Set loading to false
-            }
-        },
-        []
-    );
-    const getUpdatedProducts = useCallback(async () => {
+    const fullDomainWithPort = `${protocol}//${hostname}${port ? `:${port}` : ""}`;
+
+    const getProducts = useCallback(async (search = "", page = 1, barcode = "") => {
+        setLoading(true);
         try {
-            const res = await axios.get('/admin/get/products');
+            const res = await axios.get("/admin/get/products", {
+                params: { search, page, barcode },
+            });
             const productsData = res.data;
-            setProducts(productsData.data);
-            setTotalPages(productsData.meta.last_page); // Get total pages
+            
+            if (page === 1) {
+                setProducts(productsData.data);
+            } else {
+                setProducts((prev) => [...prev, ...productsData.data]);
+            }
+            
+            if (productsData.data.length === 1 && barcode !== "") {
+                addProductToCart(productsData.data[0].id);
+            }
+            setTotalPages(productsData.meta.last_page);
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error("خطأ أثناء جلب المنتجات:", error);
+        } finally {
+            setLoading(false);
         }
     }, []);
+
+    const getUpdatedProducts = useCallback(async () => {
+        try {
+            const res = await axios.get("/admin/get/products");
+            const productsData = res.data;
+            setProducts(productsData.data);
+            setTotalPages(productsData.meta.last_page);
+        } catch (error) {
+            console.error("خطأ أثناء تحديث المنتجات:", error);
+        }
+    }, []);
+
     useEffect(() => {
         getUpdatedProducts();
     }, [productUpdated]);
 
     const getCarts = async () => {
         try {
-            const res = await axios.get('/admin/cart');
+            const res = await axios.get("/admin/cart");
             const data = res.data;
-            setTotal(data?.total);
-            setUpdateTotal(data?.total - orderDiscount);
-            setCarts(data?.carts);
+            setTotal(data?.total || 0); // إضافة قيمة افتراضية
+            setCarts(data?.carts || []); // إضافة قيمة افتراضية
         } catch (error) {
-            console.error("Error fetching carts:", error);
+            console.error("خطأ أثناء جلب السلة:", error);
         }
     };
 
@@ -86,53 +88,59 @@ export default function Pos() {
     }, [cartUpdated]);
 
     useEffect(() => {
-        let paid1 = paid;
-        let disc = orderDiscount;
-        if (paid == "") {
-            paid1 = 0;
-        }
-        if (orderDiscount == "") {
-            disc = 0;
-        }
-        const updatedTotalAmount = parseFloat(total) - parseFloat(disc);
-        const dueAmount = updatedTotalAmount - parseFloat(paid1);
+        let paid1 = parseFloat(paid) || 0;
+        let disc = parseFloat(orderDiscount) || 0;
+        
+        const updatedTotalAmount = parseFloat(total) - disc;
+        const dueAmount = updatedTotalAmount - paid1;
+        
         setUpdateTotal(updatedTotalAmount?.toFixed(2));
         setDue(dueAmount?.toFixed(2));
     }, [orderDiscount, paid, total]);
+    
     useEffect(() => {
         if (searchQuery) {
             setProducts([]);
-            getProducts(searchQuery, currentPage, "");
+            getProducts(searchQuery, 1, "");
+        } else if (!searchQuery && !searchBarcode) {
+             setProducts([]);
+             getProducts("", 1, "");
         }
         setSearchBarcode("");
-    }, [currentPage, searchQuery]);
+    }, [searchQuery]);
 
     useEffect(() => {
         if (searchBarcode) {
             setProducts([]);
-           getProducts("", currentPage, searchBarcode);
+            getProducts("", 1, searchBarcode);
         }
     }, [searchBarcode]);
-
-    // Infinite scroll logic
+    
+    // منطق التمرير اللانهائي
     useEffect(() => {
         const handleScroll = () => {
-            if (
-                window.innerHeight + document.documentElement.scrollTop >=
-                document.documentElement.offsetHeight
-            ) {
-                // Load next page if not on the last page
-                if (currentPage < totalPages) {
-                    setCurrentPage((prev) => prev + 1);
-                }
-            }
+             const productsContainer = document.querySelector('.products-card-container');
+             const scrollElement = productsContainer ? productsContainer.parentElement : null;
+
+             if (!scrollElement) return;
+
+             // اكتشاف نهاية التمرير في حاوية المنتجات
+             if (scrollElement.scrollTop + scrollElement.clientHeight >= scrollElement.scrollHeight - 100) {
+                 if (currentPage < totalPages && !loading) {
+                     setCurrentPage((prev) => prev + 1);
+                 }
+             }
         };
 
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, [currentPage, totalPages]);
+        const container = document.querySelector('.products-card-container');
+        if (container) {
+            container.parentElement.addEventListener("scroll", handleScroll);
+            return () => {
+                 container.parentElement.removeEventListener("scroll", handleScroll);
+            };
+        }
+    }, [currentPage, totalPages, loading]);
+
 
     function addProductToCart(id) {
         axios
@@ -140,22 +148,23 @@ export default function Pos() {
             .then((res) => {
                 setCartUpdated(!cartUpdated);
                 playSound(SuccessSound);
-                toast.success(res?.data?.message);
+                // رسالة عربية
+                toast.success(res?.data?.message || "تمت إضافة المنتج بنجاح"); 
             })
             .catch((err) => {
                 playSound(WarningSound);
-                toast.error(err.response.data.message);
+                // رسالة عربية
+                toast.error(err.response.data.message || "حدث خطأ أثناء الإضافة إلى السلة"); 
             });
     }
+
     function cartEmpty() {
-        if (total <= 0) {
-            return;
-        }
+        if (total <= 0) return;
         Swal.fire({
-            title: "Are you sure you want to delete Cart?",
+            title: "هل أنت متأكد أنك تريد مسح السلة؟", // تم تعديله إلى "مسح السلة"
             showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: "No",
+            confirmButtonText: "نعم", 
+            denyButtonText: "لا", 
             customClass: {
                 actions: "my-actions",
                 cancelButton: "order-1 right-gap",
@@ -168,31 +177,37 @@ export default function Pos() {
                     .put("/admin/cart/empty")
                     .then((res) => {
                         setCartUpdated(!cartUpdated);
+                        setOrderDiscount(0);
+                        setPaid(0);
                         playSound(SuccessSound);
-                        toast.success(res?.data?.message);
+                        // رسالة عربية
+                        toast.success(res?.data?.message || "تم مسح السلة بنجاح"); 
                     })
                     .catch((err) => {
                         playSound(WarningSound);
-                        toast.error(err.response.data.message);
+                        // رسالة عربية
+                        toast.error(err.response.data.message || "حدث خطأ أثناء مسح السلة"); 
                     });
-            } else if (result.isDenied) {
-                return;
             }
         });
     }
+
     function orderCreate() {
-        if (total <= 0) {
-            return;
-        }
+        if (total <= 0) return;
         if (!customerId) {
-            toast.error("Please select customer");
+            // رسالة عربية
+            toast.error("يرجى اختيار العميل أولاً"); 
             return;
         }
+
+        const formattedDue = parseFloat(due).toFixed(2);
+        
         Swal.fire({
-            title: `Are you sure you want to complete this order? <br>Due: ${due}`,
+            title: `هل أنت متأكد أنك تريد إتمام هذا الطلب؟   
+المتبقي: ${formattedDue}`, // تم تعديل إلى "إتمام هذا الطلب"
             showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: "No",
+            confirmButtonText: "نعم", 
+            denyButtonText: "لا", 
             customClass: {
                 actions: "my-actions",
                 cancelButton: "order-1 right-gap",
@@ -210,88 +225,59 @@ export default function Pos() {
                     .then((res) => {
                         setCartUpdated(!cartUpdated);
                         setProductUpdated(!productUpdated);
-                        toast.success(res?.data?.message);
-                        // window.location.href = `orders/invoice/${res?.data?.order?.id}`;
+                        setOrderDiscount(0);
+                        setPaid(0);
+                        setTotal(0);
+                        // رسالة عربية
+                        toast.success(res?.data?.message || "تم إنشاء الطلب بنجاح"); 
                         window.location.href = `orders/pos-invoice/${res?.data?.order?.id}`;
                     })
                     .catch((err) => {
-                        toast.error(err.response.data.message);
+                        // رسالة عربية
+                        toast.error(err.response.data.message || "حدث خطأ أثناء إنشاء الطلب");
                     });
-            } else if (result.isDenied) {
-                return;
             }
         });
     }
+
     return (
         <>
             <div className="card">
-                {/* <div class="mt-n5 mb-3 d-flex justify-content-end">
-                    <a
-                        href="/admin"
-                        className="btn bg-gradient-primary mr-2"
-                    >
-                        Dashboard
-                    </a>
-                    <a
-                        href="/admin/ordersma"
-                        className="btn bg-gradient-primary"
-                    >
-                        Orders
-                    </a>
-                </div> */}
-
                 <div className="card-body p-2 p-md-4 pt-0">
                     <div className="row">
                         <div className="col-md-6 col-lg-5 mb-2">
                             <div className="row mb-2">
                                 <div className="col-12">
-                                    <CustomerSelect
-                                        setCustomerId={setCustomerId}
-                                    />
+                                    <CustomerSelect setCustomerId={setCustomerId} /> {/* (يجب تعريب هذا المكون يدوياً) */}
                                 </div>
-                                {/* <div className="col-6">
-                                <form className="form">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Enter barcode"
-                                        value={searchQuery}
-                                        onChange={(e) =>
-                                            setSearchQuery(e.target.value)
-                                        }
-                                    />
-                                </form>
-                            </div> */}
                             </div>
+
                             <Cart
                                 carts={carts}
                                 setCartUpdated={setCartUpdated}
                                 cartUpdated={cartUpdated}
-                            />
+                            /> {/* (يجب تعريب هذا المكون يدوياً) */}
+
                             <div className="card">
                                 <div className="card-body">
                                     <div className="row text-bold mb-1">
-                                        <div className="col">Sub Total:</div>
-                                        <div className="col text-right mr-2">
-                                            {total}
-                                        </div>
+                                        <div className="col">المجموع الجزئي:</div> 
+                                        <div className="col text-right mr-2">{total}</div>
                                     </div>
                                     <div className="row text-bold mb-1">
-                                        <div className="col">Discount:</div>
+                                        <div className="col">الخصم:</div> 
                                         <div className="col text-right mr-2">
                                             <input
                                                 type="number"
                                                 className="form-control form-control-sm"
-                                                placeholder="Enter discount"
+                                                placeholder="أدخل قيمة الخصم" 
                                                 min={0}
                                                 disabled={total <= 0}
                                                 value={orderDiscount}
                                                 onChange={(e) => {
-                                                    const value =
-                                                        e.target.value;
+                                                    const value = e.target.value;
                                                     if (
-                                                        parseFloat(value) >
-                                                            total ||
+                                                        parseFloat(value) > total ||
                                                         parseFloat(value) < 0
                                                     ) {
                                                         return;
@@ -302,9 +288,7 @@ export default function Pos() {
                                         </div>
                                     </div>
                                     <div className="row text-bold mb-1">
-                                        <div className="col">
-                                            Apply Fractional Discount:
-                                        </div>
+                                        <div className="col">تطبيق خصم الكسور:</div> {/* النص العربي المباشر */}
                                         <div className="col text-right mr-2">
                                             <input
                                                 type="checkbox"
@@ -312,13 +296,8 @@ export default function Pos() {
                                                 disabled={total <= 0}
                                                 onChange={(e) => {
                                                     if (e.target.checked) {
-                                                        const fractionalPart =
-                                                            total % 1;
-                                                        setOrderDiscount(
-                                                            fractionalPart?.toFixed(
-                                                                2
-                                                            )
-                                                        );
+                                                        const fractionalPart = total % 1;
+                                                        setOrderDiscount(fractionalPart?.toFixed(2));
                                                     } else {
                                                         setOrderDiscount(0);
                                                     }
@@ -327,28 +306,24 @@ export default function Pos() {
                                         </div>
                                     </div>
                                     <div className="row text-bold mb-1">
-                                        <div className="col">Total:</div>
-                                        <div className="col text-right mr-2">
-                                            {updateTotal}
-                                        </div>
+                                        <div className="col">الإجمالي:</div> 
+                                        <div className="col text-right mr-2">{updateTotal}</div>
                                     </div>
                                     <div className="row text-bold mb-1">
-                                        <div className="col">Paid:</div>
+                                        <div className="col">المدفوع:</div> 
                                         <div className="col text-right mr-2">
                                             <input
                                                 type="number"
                                                 className="form-control form-control-sm"
-                                                placeholder="Enter paid"
+                                                placeholder="أدخل المبلغ المدفوع"
                                                 min={0}
                                                 disabled={total <= 0}
                                                 value={paid}
                                                 onChange={(e) => {
-                                                    const value =
-                                                        e.target.value;
+                                                    const value = e.target.value;
                                                     if (
                                                         parseFloat(value) < 0 ||
-                                                        parseFloat(value) >
-                                                            updateTotal
+                                                        parseFloat(value) > updateTotal
                                                     ) {
                                                         return;
                                                     }
@@ -358,74 +333,69 @@ export default function Pos() {
                                         </div>
                                     </div>
                                     <div className="row text-bold">
-                                        <div className="col">Due:</div>
-                                        <div className="col text-right mr-2">
-                                            {due}
-                                        </div>
+                                        <div className="col">المتبقي:</div> 
+                                        <div className="col text-right mr-2">{due}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="row">
+
+                            <div className="row mt-3">
                                 <div className="col">
                                     <button
                                         onClick={() => cartEmpty()}
                                         type="button"
                                         className="btn bg-gradient-danger btn-block text-white text-bold"
+                                        disabled={total <= 0}
                                     >
-                                        Clear Cart
+                                        مسح السلة {/* تم التعديل */}
                                     </button>
                                 </div>
                                 <div className="col">
                                     <button
-                                        onClick={() => {
-                                            orderCreate();
-                                        }}
+                                        onClick={() => orderCreate()}
                                         type="button"
                                         className="btn bg-gradient-primary btn-block text-white text-bold"
+                                        disabled={total <= 0}
                                     >
-                                        Checkout
+                                        إتمام الطلب {/* تم التعديل */}
                                     </button>
                                 </div>
                             </div>
                         </div>
+
                         <div className="col-md-6 col-lg-7">
                             <div className="row">
                                 <div className="input-group mb-2 col-md-6">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-barcode"></i>
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text">
+                                            <i className="fas fa-barcode"></i>
                                         </span>
                                     </div>
                                     <input
                                         type="text"
                                         className="form-control"
-                                        placeholder="Enter Product Barcode"
+                                        placeholder="أدخل باركود المنتج" 
                                         value={searchBarcode}
                                         autoFocus
-                                        onChange={(e) =>
-                                            setSearchBarcode(e.target.value)
-                                        }
+                                        onChange={(e) => setSearchBarcode(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-2 col-md-6">
                                     <input
                                         type="text"
                                         className="form-control"
-                                        placeholder="Enter Product Name"
+                                        placeholder="أدخل اسم المنتج" 
                                         value={searchQuery}
-                                        onChange={(e) =>
-                                            setSearchQuery(e.target.value)
-                                        }
+                                        onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
                             </div>
+
                             <div className="row products-card-container">
                                 {products.length > 0 &&
                                     products.map((product, index) => (
                                         <div
-                                            onClick={() =>
-                                                addProductToCart(product.id)
-                                            }
+                                            onClick={() => addProductToCart(product.id)}
                                             className="col-6 col-md-4 col-lg-3 mb-3"
                                             key={index}
                                             style={{ cursor: "pointer" }}
@@ -444,23 +414,18 @@ export default function Pos() {
                                                 />
                                                 <div className="product-details">
                                                     <p className="mb-0 text-bold product-name">
-                                                        {product.name} (
-                                                        {product.quantity})
+                                                        {product.name} ({product.quantity})
                                                     </p>
-                                                    <p>
-                                                        Price:{" "}
-                                                        {
-                                                            product?.discounted_price
-                                                        }
-                                                    </p>
+                                                    <p>السعر: {product?.discounted_price}</p> 
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
                             </div>
+
                             {loading && (
-                                <div className="loading-more">
-                                    Loading more...
+                                <div className="loading-more text-center mt-2">
+                                    يتم تحميل المزيد...
                                 </div>
                             )}
                         </div>

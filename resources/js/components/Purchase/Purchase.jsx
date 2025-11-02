@@ -11,7 +11,7 @@ export default function Purchase() {
     const [barcode, setBarcode] = useState("");
     const [selectedSupplier, setSelectedSupplier] = useState({
         value: 1,
-        label: window.translations.own_supplier,
+        label: "المورّد الافتراضي",
     });
     const [purchaseId, setPurchaseId] = useState(null);
     const [date, setDate] = useState(null);
@@ -21,6 +21,7 @@ export default function Purchase() {
     const [shipping, setShipping] = useState(0);
     const [products, setProducts] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
+
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
         const barcodeParam = searchParams.get("barcode");
@@ -33,16 +34,19 @@ export default function Purchase() {
             setPurchaseId(purchase_id);
         }
     }, []);
+
     useEffect(() => {
         if (barcode) {
             getProducts();
         }
     }, [barcode]);
+
     useEffect(() => {
         if (purchaseId) {
             getPurchaseProducts();
         }
     }, [purchaseId]);
+
     const getPurchaseProducts = useCallback(async () => {
         try {
             const res = await axios.get(`/admin/purchase/${purchaseId}`);
@@ -67,19 +71,15 @@ export default function Purchase() {
             setDiscount(purchaseData?.discount_value);
             setShipping(purchaseData?.shipping);
         } catch (error) {
-            console.error("Error fetching products:", error);
-        } finally {
+            console.error("حدث خطأ أثناء جلب المنتجات:", error);
         }
     }, [purchaseId]);
 
     const getProducts = useCallback(async () => {
         if (!searchTerm.trim()) {
-            console.log("Search term is empty");
+            console.log("حقل البحث فارغ");
             return;
         }
-
-        // Optional: Uncomment if you want to show loading state
-        // setLoading(true);
 
         try {
             const res = await axios.get("/admin/products", {
@@ -88,25 +88,22 @@ export default function Purchase() {
 
             const productsData = res.data;
 
-            // Ensure productsData and productsData.data exist
             if (productsData?.data && productsData.data.length) {
                 productsData.data.forEach((product) => {
                     const existingProductIndex = products.findIndex(
                         (p) => p.id === product.id
                     );
                     if (existingProductIndex !== -1) {
-                        // Product exists, increment qty
                         setProducts((prevProducts) => {
                             const updatedProducts = [...prevProducts];
-                            updatedProducts[existingProductIndex].qty += 1; // Increment qty
+                            updatedProducts[existingProductIndex].qty += 1;
                             updatedProducts[existingProductIndex].subTotal =
                                 updatedProducts[existingProductIndex]
                                     .purchase_price *
-                                updatedProducts[existingProductIndex].qty; // Update subTotal
+                                updatedProducts[existingProductIndex].qty;
                             return updatedProducts;
                         });
                     } else {
-                        // New product, add to the list
                         const newProduct = {
                             id: product.id,
                             name: product.name,
@@ -124,22 +121,16 @@ export default function Purchase() {
                 });
             }
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error("حدث خطأ أثناء جلب المنتجات:", error);
         } finally {
-            // Optional: Uncomment if you want to hide loading state
-            // setLoading(false);
-
-            // Clear searchTerm if needed
             setSearchTerm("");
         }
-    }, [searchTerm]); // Don't forget to add searchTerm as a dependency
+    }, [searchTerm]);
 
-    // Handle deletion of a product
     const handleDelete = (id) => {
         setProducts(products.filter((product) => product.id !== id));
     };
 
-    // Update quantity and recalculate subtotal
     const handleQtyChange = (id, value) => {
         const updatedProducts = products.map((product) => {
             if (product.id === id) {
@@ -157,7 +148,6 @@ export default function Purchase() {
         setProducts(updatedProducts);
     };
 
-    // Update purchase price and recalculate subtotal
     const handlePriceChange = (id, value) => {
         const updatedProducts = products.map((product) => {
             if (product.id === id) {
@@ -172,12 +162,11 @@ export default function Purchase() {
         });
         setProducts(updatedProducts);
     };
-    // Add a new product by searching
+
     const handleSearchAdd = () => {
         getProducts();
     };
 
-    // Calculate totals with two decimal places
     const calculateTotals = () => {
         const subTotal = products.reduce(
             (sum, product) => sum + product.subTotal,
@@ -206,26 +195,26 @@ export default function Purchase() {
     };
 
     const totals = calculateTotals();
+
     const handleSubmit = async () => {
         if (totals.grandTotal <= 0) {
-            //    toast.error("Total must be greater than zero.");
+            toast.error("يجب أن يكون الإجمالي أكبر من الصفر");
             return;
         }
         if (!date) {
-            toast.error(window.translations.select_purchase_date);
+            toast.error("يرجى تحديد تاريخ الشراء");
             return;
         }
         if (!supplierId) {
-            toast.error(window.translations.select_supplier);
+            toast.error("يرجى اختيار المورّد");
             return;
         }
 
-        // Show confirmation dialog
         Swal.fire({
-            title: window.translations.confirm_save_purchase,
+            title: "هل تريد حفظ عملية الشراء؟",
             showDenyButton: true,
-            confirmButtonText: window.translations.yes,
-            denyButtonText: window.translations.no,
+            confirmButtonText: "نعم",
+            denyButtonText: "لا",
             customClass: {
                 actions: "my-actions",
                 cancelButton: "order-1 right-gap",
@@ -234,11 +223,6 @@ export default function Purchase() {
             },
         }).then(async (result) => {
             if (result.isConfirmed) {
-                //    console.log("data:", {
-                //        products,
-                //        supplierId,
-                //        totals,
-                //    }); return;
                 try {
                     const res = await axios.post("/admin/purchase", {
                         purchase_id: purchaseId,
@@ -248,49 +232,42 @@ export default function Purchase() {
                         totals,
                     });
                     setProducts([]);
-                    toast.success(res?.data?.message);
+                    toast.success(res?.data?.message || "تم حفظ عملية الشراء بنجاح");
                     window.location.href = "/admin/purchase";
                 } catch (err) {
                     toast.error(
-                        err.response?.data?.message || "An error occurred"
+                        err.response?.data?.message || "حدث خطأ أثناء حفظ عملية الشراء"
                     );
                 }
             }
         });
     };
 
-    // product search
     useEffect(() => {
-        // Define the asynchronous function
         async function getProducts() {
             if (!searchTerm.trim()) {
                 setSearchResults([]);
                 return;
             }
-
             try {
                 const res = await axios.get("/admin/products", {
                     params: { search: searchTerm },
                 });
-
                 const productsData = res.data;
                 setSearchResults(productsData?.data || []);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("حدث خطأ أثناء جلب المنتجات:", error);
             }
         }
-        // Call the async function inside useEffect
         getProducts();
     }, [searchTerm]);
-    // Handle adding selected product to the products list
-    // Handle adding selected product to the products list
+
     const handleProductSelect = (product) => {
         const existingProductIndex = products.findIndex(
             (p) => p.id === product.id
         );
 
         if (existingProductIndex !== -1) {
-            // If product exists, increment quantity
             setProducts((prevProducts) => {
                 const updatedProducts = [...prevProducts];
                 updatedProducts[existingProductIndex].qty += 1;
@@ -300,7 +277,6 @@ export default function Purchase() {
                 return updatedProducts;
             });
         } else {
-            // Add new product to the list
             const newProduct = {
                 id: product.id,
                 name: product.name,
@@ -313,10 +289,10 @@ export default function Purchase() {
             setProducts((prevProducts) => [...prevProducts, newProduct]);
         }
 
-        // Clear search term and results
         setSearchTerm("");
         setSearchResults([]);
     };
+
     return (
         <>
             <div className="container-fluid">
@@ -325,14 +301,13 @@ export default function Purchase() {
                         <div className="row">
                             <div className="mb-3 col-md-6">
                                 <label htmlFor="date" className="form-label">
-                                    {window.translations.purchase_date}
-                                    <span className="text-danger">*</span>
+                                    تاريخ الشراء<span className="text-danger">*</span>
                                 </label>
                                 <div>
                                     <DatePicker
                                         name="date"
                                         className="form-control"
-                                        placeholderText="Enter purchase date"
+                                        placeholderText="أدخل تاريخ الشراء"
                                         selected={date}
                                         dateFormat="yyyy-MM-dd"
                                         onChange={(date) => {
@@ -347,12 +322,8 @@ export default function Purchase() {
                                 </div>
                             </div>
                             <div className="mb-3 col-md-6">
-                                <label
-                                    htmlFor="supplier"
-                                    className="form-label"
-                                >
-                                    {window.translations.supplier}
-                                    <span className="text-danger">*</span>
+                                <label htmlFor="supplier" className="form-label">
+                                    المورّد<span className="text-danger">*</span>
                                 </label>
                                 <Suppliers
                                     setSupplierId={setSupplierId}
@@ -362,6 +333,7 @@ export default function Purchase() {
                         </div>
                     </div>
                 </div>
+
                 <div className="card">
                     <div className="card-body">
                         <div className="row mb-2">
@@ -378,17 +350,17 @@ export default function Purchase() {
                                     onChange={(e) =>
                                         setSearchTerm(e.target.value)
                                     }
-                                    placeholder="Enter product barcode/name"
+                                    placeholder="أدخل باركود أو اسم المنتج"
                                 />
                                 <button
                                     className="btn bg-gradient-primary mr-2"
                                     onClick={handleSearchAdd}
                                 >
-                                    {window.translations.add_product}
+                                    إضافة منتج
                                 </button>
                             </div>
                         </div>
-                        {/* Display search results below the input */}
+
                         {searchResults.length > 0 && (
                             <div className="row mb-2">
                                 <div
@@ -408,26 +380,26 @@ export default function Purchase() {
                                                 }
                                                 style={{ cursor: "pointer" }}
                                             >
-                                                {product.name} - $
-                                                {product.price}
+                                                {product.name} - {product.price} ر.س
                                             </li>
                                         ))}
                                     </ul>
                                 </div>
                             </div>
                         )}
+
                         <div className="row">
                             <div className="col-12">
                                 <table className="table table-sm table-bordered text-center">
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Product Name</th>
-                                            <th>Purchase Price</th>
-                                            <th>Current Stock</th>
-                                            <th>Qty</th>
-                                            <th>Sub Total</th>
-                                            <th>Action</th>
+                                            <th>اسم المنتج</th>
+                                            <th>سعر الشراء</th>
+                                            <th>المخزون الحالي</th>
+                                            <th>الكمية</th>
+                                            <th>الإجمالي الفرعي</th>
+                                            <th>الإجراء</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -467,9 +439,7 @@ export default function Purchase() {
                                                     />
                                                 </td>
                                                 <td>
-                                                    {product.subTotal.toFixed(
-                                                        2
-                                                    )}
+                                                    {product.subTotal.toFixed(2)}
                                                 </td>
                                                 <td>
                                                     <button
@@ -480,7 +450,7 @@ export default function Purchase() {
                                                             )
                                                         }
                                                     >
-                                                        Delete
+                                                        حذف
                                                     </button>
                                                 </td>
                                             </tr>
@@ -489,6 +459,7 @@ export default function Purchase() {
                                 </table>
                             </div>
                         </div>
+
                         <div className="row">
                             <div className="col-6"></div>
                             <div className="col-6">
@@ -496,35 +467,33 @@ export default function Purchase() {
                                     <table className="table table-sm">
                                         <tbody>
                                             <tr>
-                                                <th>Subtotal:</th>
+                                                <th>الإجمالي الفرعي:</th>
                                                 <td className="text-right">
                                                     {totals.subTotal.toFixed(2)}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Tax:</th>
+                                                <th>الضريبة:</th>
                                                 <td className="text-right">
                                                     {totals.tax.toFixed(2)}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Discount:</th>
+                                                <th>الخصم:</th>
                                                 <td className="text-right">
                                                     {totals.discount.toFixed(2)}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Shipping:</th>
+                                                <th>رسوم الشحن:</th>
                                                 <td className="text-right">
                                                     {totals.shipping.toFixed(2)}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Grand Total:</th>
+                                                <th>الإجمالي الكلي:</th>
                                                 <td className="text-right">
-                                                    {totals.grandTotal.toFixed(
-                                                        2
-                                                    )}
+                                                    {totals.grandTotal.toFixed(2)}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -534,12 +503,13 @@ export default function Purchase() {
                         </div>
                     </div>
                 </div>
+
                 <div className="card">
                     <div className="card-body">
                         <div className="row">
                             <div className="mb-3 col-md-4">
                                 <label htmlFor="tax" className="form-label">
-                                    Tax
+                                    الضريبة
                                 </label>
                                 <input
                                     type="number"
@@ -549,17 +519,14 @@ export default function Purchase() {
                                     onChange={(e) =>
                                         setTax(parseFloat(e.target.value) || 0)
                                     }
-                                    placeholder="Enter tax"
+                                    placeholder="أدخل قيمة الضريبة"
                                     name="tax"
                                     required
                                 />
                             </div>
                             <div className="mb-3 col-md-4">
-                                <label
-                                    htmlFor="discount"
-                                    className="form-label"
-                                >
-                                    Discount
+                                <label htmlFor="discount" className="form-label">
+                                    الخصم
                                 </label>
                                 <input
                                     type="number"
@@ -571,17 +538,14 @@ export default function Purchase() {
                                             parseFloat(e.target.value) || 0
                                         )
                                     }
-                                    placeholder="Enter discount"
+                                    placeholder="أدخل قيمة الخصم"
                                     name="discount"
                                     required
                                 />
                             </div>
                             <div className="mb-3 col-md-4">
-                                <label
-                                    htmlFor="shipping"
-                                    className="form-label"
-                                >
-                                    Shipping Charge
+                                <label htmlFor="shipping" className="form-label">
+                                    رسوم الشحن
                                 </label>
                                 <input
                                     type="number"
@@ -593,7 +557,7 @@ export default function Purchase() {
                                             parseFloat(e.target.value) || 0
                                         )
                                     }
-                                    placeholder="Enter shipping"
+                                    placeholder="أدخل رسوم الشحن"
                                     name="shipping"
                                     required
                                 />
@@ -601,12 +565,13 @@ export default function Purchase() {
                         </div>
                     </div>
                 </div>
+
                 <button
                     type="submit"
                     className="btn btn-md bg-gradient-primary"
                     onClick={handleSubmit}
                 >
-                    Create
+                    {purchaseId ? "تحديث الشراء" : "إنشاء عملية شراء"}
                 </button>
             </div>
 

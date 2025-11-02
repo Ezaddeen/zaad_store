@@ -1,6 +1,6 @@
 @extends('backend.master')
 
-@section('title', 'Brands')
+@section('title', __('brands.brands_list')) {{-- تم تعريب 'Brands' --}}
 
 @section('content')
 <div class="card">
@@ -9,7 +9,7 @@
   <div class="mt-n5 mb-3 d-flex justify-content-end">
     <a href="{{ route('backend.admin.brands.create') }}" class="btn bg-gradient-primary">
       <i class="fas fa-plus-circle"></i>
-      Add New
+      {{ __('brands.add_new') }} {{-- تم تعريب 'Add New' --}}
     </a>
   </div>
   @endcan
@@ -22,9 +22,9 @@
               <tr>
                 <th data-orderable="false">#</th>
                 <th></th>
-                <th>Name</th>
-                <th>Status</th>
-                <th data-orderable="false">Action</th>
+                <th>{{ __('brands.name') }}</th> {{-- تم تعريب 'Name' --}}
+                <th>{{ __('common.status') }}</th> {{-- تم تعريب 'Status' --}}
+                <th data-orderable="false">{{ __('common.action') }}</th> {{-- تم تعريب 'Action' --}}
               </tr>
             </thead>
           </table>
@@ -50,6 +50,14 @@
       ajax: {
         url: "{{ route('backend.admin.brands.index') }}"
       },
+      // لا يمكن تعريب رؤوس الأعمدة هنا لأنها يتم جلبها من الكود (Blade)
+      // النصوص التي تحتاج إلى تعريب إضافي في DataTable (مثل "Search:", "Showing 1 to 10 of..."):
+      // تتطلب إضافة خاصية `language` في إعدادات DataTable.
+      // مثال:
+      // language: {
+      //   "search": "{{ __('common.search') }}:",
+      //   "info": "{{ __('common.showing') }} _START_ {{ __('common.to') }} _END_ {{ __('common.of') }} _TOTAL_ {{ __('common.entries') }}"
+      // },
 
       columns: [{
           data: 'DT_RowIndex',

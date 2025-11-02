@@ -1,13 +1,15 @@
 @extends('backend.master')
 
-@section('title', $role->name . ' Role Permission')
+{{-- ⬅️ تعريب العنوان: يتم عرض اسم الدور يليه نص 'تعيين صلاحيات الدور' --}}
+@section('title', $role->name . ' ' . __('roles.role_permission_title'))
 
 @section('content')
 @can('role_view')
 <div class="mt-n5 mb-3 d-flex justify-content-end">
     <a href="{{ route('backend.admin.roles') }}" class="btn bg-gradient-primary">
         <i class="fas fa-ruler-vertical"></i>
-        Roles
+        {{-- ⬅️ تعريب زر: Roles -> الأدوار --}}
+        {{ __('permissions.roles') }}
     </a>
 </div>
 @endcan
@@ -18,6 +20,7 @@
                 @csrf
                 <table class="table">
                     <tbody>
+                        {{-- يتم تجميع الصلاحيات في صفوف تحتوي كل منها على 4 أعمدة (td) --}}
                         @foreach ($permissions->chunk(4) as $permission)
                         <tr>
                             @foreach ($permission as $data)
@@ -41,6 +44,7 @@
                                         value="{{ $data->name }}"
                                         {{ $data->name == $per_found ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="customSwitch{{ $data->id }}">
+                                        {{-- يتم استخدام snakeToTitle لتحويل slug إلى نص مهذب (مثلاً: user_create -> User Create) --}}
                                         {{ snakeToTitle($data->name) }}
                                     </label>
                                 </div>
@@ -52,7 +56,8 @@
                     </tbody>
                 </table>
                 <div class="text-center mb-3">
-                    <button type="submit" class="btn bg-gradient-primary w-25"> Submit </button>
+                    {{-- ⬅️ تعريب زر: Submit -> إرسال --}}
+                    <button type="submit" class="btn bg-gradient-primary w-25"> {{ __('general.submit') }} </button>
                 </div>
             </form>
         </div>

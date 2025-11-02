@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Currency')
+{{-- ⬅️ تعريب العنوان: 'Currency' -> 'العملات' --}}
+@section('title', __('currencies.title'))
 
 @section('content')
 <div class="card">
@@ -9,7 +10,8 @@
   <div class="mt-n5 mb-3 d-flex justify-content-end">
     <a href="{{ route('backend.admin.currencies.create') }}" class="btn bg-gradient-primary">
       <i class="fas fa-plus-circle"></i>
-      Add New
+      {{-- ⬅️ تعريب: Add New -> إضافة جديد --}}
+      {{ __('common.add_new') }}
     </a>
   </div>
   @endcan
@@ -20,16 +22,20 @@
           <table id="datatables" class="table table-hover">
             <thead>
               <tr>
-                <th data-orderable="false">#</th>
-                <th>Name</th>
-                <th>Code</th>
-                <th>Symbol</th>
-                <th data-orderable="false">Action</th>
+                {{-- ⬅️ تعريب: # -> التسلسل --}}
+                <th data-orderable="false">{{ __('common.sn') }}</th>
+                {{-- ⬅️ تعريب: Name -> الاسم --}}
+                <th>{{ __('common.name') }}</th>
+                {{-- ⬅️ تعريب: Code -> الرمز المختصر --}}
+                <th>{{ __('common.code') }}</th>
+                {{-- ⬅️ تعريب: Symbol -> الرمز --}}
+                <th>{{ __('common.symbol') }}</th>
+                {{-- ⬅️ تعريب: Action -> الإجراء --}}
+                <th data-orderable="false">{{ __('common.action') }}</th>
               </tr>
             </thead>
           </table>
-          <!-- Pagination Links -->
-        </div>
+          </div>
       </div>
     </div>
   </div>
@@ -76,3 +82,4 @@
   });
 </script>
 @endpush
+

@@ -1,6 +1,7 @@
 @extends('backend.master')
 
-@section('title', 'Roles')
+{{-- ⬅️ تعريب العنوان: 'Roles' -> 'الأدوار' --}}
+@section('title', __('roles.title'))
 
 @section('content')
 <div class="card">
@@ -8,10 +9,10 @@
         @can('role_create')
         <button class="btn bg-gradient-primary" data-toggle="modal" data-target="#roleModal">
             <i class="fas fa-plus-circle"></i>
-            Add New
+            {{-- ⬅️ تعريب زر: Add New -> إضافة جديد --}}
+            {{ __('common.add_new') }}
         </button>
         @endcan
-        <!-- Modal -->
         <div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 {!! Form::open(['url' => route('backend.admin.roles.create'), 'method' => 'post']) !!}
@@ -19,21 +20,27 @@
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">
                             <i class="fas fa-plus-circle"></i>
-                            Add new role
+                            {{-- ⬅️ تعريب: Add new role -> إضافة دور جديد --}}
+                            {{ __('roles.add_new_role') }}
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        {{-- ⬅️ تعريب: Close --}}
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('general.close') }}">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            {!! Form::label('name', 'Name') !!}
-                            {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => 'Role Name']) !!}
+                            {{-- ⬅️ تعريب label: Name -> الاسم --}}
+                            {!! Form::label('name', __('common.name')) !!}
+                            {{-- ⬅️ تعريب placeholder: Role Name -> اسم الدور --}}
+                            {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('roles.role_name_placeholder')]) !!}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn bg-gradient-secondary" data-dismiss="modal">Close</button>
-                        <button class="btn bg-gradient-primary">Submit</button>
+                        {{-- ⬅️ تعريب زر: Close -> إغلاق --}}
+                        <button type="button" class="btn bg-gradient-secondary" data-dismiss="modal">{{ __('general.close') }}</button>
+                        {{-- ⬅️ تعريب زر: Submit -> إرسال --}}
+                        <button class="btn bg-gradient-primary">{{ __('general.submit') }}</button>
                     </div>
                 </div>
                 {!! Form::close() !!}
@@ -46,8 +53,10 @@
                 <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th class="text-center">Actions</th>
+                            {{-- ⬅️ تعريب: Name -> الاسم --}}
+                            <th>{{ __('common.name') }}</th>
+                            {{-- ⬅️ تعريب: Actions -> الإجراءات --}}
+                            <th class="text-center">{{ __('common.action') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,26 +65,29 @@
                             <td> {{ $role->name }} </td>
                             <td>
                                 <div class="text-center">
-                                    <a title="Permission Setup"
+                                    {{-- ⬅️ تعريب title: Permission Setup -> إعداد الصلاحيات --}}
+                                    <a title="{{ __('roles.permission_setup') }}"
                                         href="{{ route('backend.admin.roles.show', $role->id) }}" type="button"
                                         class="btn btn-dark btn-xs">
                                         <i class="fas fa-cog"></i>
                                     </a>
                                     @if ($role->id != 1)
-                                    <button title="Edit Role" type="button" class="btn bg-gradient-primary btn-xs"
+                                    {{-- ⬅️ تعريب title: Edit Role -> تعديل الدور --}}
+                                    <button title="{{ __('common.edit') }} {{ __('roles.role') }}" type="button" class="btn bg-gradient-primary btn-xs"
                                         data-toggle="modal" data-target="#editRole-{{ $role->id }}">
                                         <i class="fas fa-pencil-alt"></i>
                                     </button>
-                                    <a title="Delete Role"
+                                    {{-- ⬅️ تعريب title: Delete Role -> حذف الدور --}}
+                                    {{-- ⬅️ تعريب confirm: Are you sure ? -> هل أنت متأكد؟ --}}
+                                    <a title="{{ __('common.delete') }} {{ __('roles.role') }}"
                                         href="{{ route('backend.admin.roles.delete', $role->id) }}"
                                         type="button" class="btn btn-danger btn-xs"
-                                        onclick="return confirm('Are you sure ?')">
+                                        onclick="return confirm('{{ __('general.confirm_delete') }}')">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                     @endif
                                 </div>
 
-                                <!-- Modal -->
                                 <div class="modal fade" id="editRole-{{ $role->id }}" tabindex="-1"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -84,26 +96,32 @@
                                             <div class="modal-header">
                                                 <h5 class="modal-title fs-5" id="exampleModalLabel">
                                                     <i class="fas fa-pencil-alt"></i>
-                                                    Edit Role
+                                                    {{-- ⬅️ تعريب: Edit Role -> تعديل الدور --}}
+                                                    {{ __('common.edit') }} {{ __('roles.role') }}
                                                 </h5>
+                                                {{-- ⬅️ تعريب: Close --}}
                                                 <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
+                                                    aria-label="{{ __('general.close') }}">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="form-group">
-                                                    <label class="control-label">Name:</label>
-                                                    {!! Form::text('name', $role->name, ['class' => 'form-control', 'placeholder' => 'Role Name']) !!}
+                                                    {{-- ⬅️ تعريب label: Name: -> الاسم: --}}
+                                                    <label class="control-label">{{ __('common.name') }}:</label>
+                                                    {{-- ⬅️ تعريب placeholder: Role Name -> اسم الدور --}}
+                                                    {!! Form::text('name', $role->name, ['class' => 'form-control', 'placeholder' => __('roles.role_name_placeholder')]) !!}
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
+                                                {{-- ⬅️ تعريب زر: Close -> إغلاق --}}
                                                 <button type="button" class="btn bg-gradient-secondary"
                                                     data-dismiss="modal">
-                                                    Close
+                                                    {{ __('general.close') }}
                                                 </button>
+                                                {{-- ⬅️ تعريب زر: Save changes -> حفظ التغييرات --}}
                                                 <button type="submit" class="btn bg-gradient-primary">
-                                                    Save changes
+                                                    {{ __('general.save_changes') }}
                                                 </button>
                                             </div>
                                         </div>
