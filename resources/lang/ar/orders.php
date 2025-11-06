@@ -27,6 +27,7 @@ return [
     'paid'=> 'المدفوع',
     // Placeholder
     'placeholder_amount' => 'أدخل المبلغ',
+    'sale' => 'البيع',
 ];
 
 // ملاحظة: المفاتيح 'total' و 'due' و 'collection_amount' كانت مكررة في نهاية ملفك، وتم الإبقاء على النسخة الأولى فقط.

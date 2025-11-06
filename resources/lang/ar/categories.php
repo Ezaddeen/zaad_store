@@ -15,4 +15,5 @@ return [
     'placeholder_name' => 'أدخل اسم التصنيف',
     'placeholder_description' => 'أدخل الوصف هنا',
     'preview_image' => 'معاينة الصورة المصغرة',
+    'title' => 'الفئات',
 ];
