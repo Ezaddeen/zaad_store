@@ -16,6 +16,7 @@ use App\Trait\FileHandler;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
+use Illuminate\Database\QueryException; // ⬅️ أضف هذا السطر
 
 class ProductController extends Controller
 {
@@ -190,15 +191,40 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->back()->with('success', 'Product Deleted Successfully');
     }
+
+    // ==================================================
+    // ⬅️        هذه هي الدالة المعدلة بالكامل        ⬅️
+    // ==================================================
     public function import(Request $request)
     {
         if ($request->query('download-demo')) {
             return Excel::download(new DemoProductsExport, 'demo_products.xlsx');
         }
+
         if ($request->isMethod('post') && $request->hasFile('file')) {
-            Excel::import(new ProductsImport, $request->file('file'));
-            return redirect()->back()->with('success', 'Products imported successfully.');
+            
+            try {
+                Excel::import(new ProductsImport, $request->file('file'));
+                
+                return redirect()->back()->with('success', 'تم استيراد المنتجات بنجاح.');
+
+            } catch (QueryException $e) {
+                
+                if ($e->errorInfo[1] == 1048) {
+                    preg_match("/Column '(\w+)' cannot be null/", $e->getMessage(), $matches);
+                    $columnName = $matches[1] ?? 'أحد الحقول المطلوبة';
+
+                    $errorMessage = "فشل الاستيراد. لا يمكن أن يكون الحقل '{$columnName}' فارغاً. يرجى التحقق من ملف الإكسل والتأكد من عدم وجود خلايا فارغة في هذا العمود.";
+                    return redirect()->back()->with('error', $errorMessage);
+                }
+
+                return redirect()->back()->with('error', 'حدث خطأ غير متوقع في قاعدة البيانات أثناء الاستيراد. يرجى التحقق من ملفك والمحاولة مرة أخرى.');
+
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'حدث خطأ غير متوقع: ' . $e->getMessage());
+            }
         }
+
         return view('backend.products.import');
     }
 }
