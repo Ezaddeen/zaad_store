@@ -65,11 +65,13 @@ class CartController extends Controller
 
         // Check if the product is active and has sufficient stock
         if (!$product->status) {
-            return response()->json(['message' => 'Product is not available'], 400);
+            // ⬅️ [تم التعريب]
+            return response()->json(['message' => 'المنتج غير متوفر حالياً'], 400);
         }
 
         if ($product->quantity <= 0) {
-            return response()->json(['message' => 'Insufficient stock available'], 400);
+            // ⬅️ [تم التعريب]
+            return response()->json(['message' => 'الكمية غير كافية في المخزون'], 400);
         }
 
         // Fetch the cart item for the current user and product
@@ -80,9 +82,11 @@ class CartController extends Controller
             if ($cartItem->quantity < $product->quantity) {
                 $cartItem->quantity += 1;
                 $cartItem->save();
-                return response()->json(['message' => 'Quantity updated', 'quantity' => $cartItem->quantity], 200);
+                // ⬅️ [تم التعريب]
+                return response()->json(['message' => 'تم تحديث الكمية بنجاح', 'quantity' => $cartItem->quantity], 200);
             } else {
-                return response()->json(['message' => 'Cannot add more, stock limit reached'], 400);
+                // ⬅️ [تم التعريب]
+                return response()->json(['message' => 'لا يمكن إضافة المزيد، تم الوصول إلى حد المخزون'], 400);
             }
         } else {
             // If not in the cart, create a new cart item
@@ -91,7 +95,8 @@ class CartController extends Controller
             $cart->product_id = $product_id;
             $cart->quantity = 1;
             $cart->save();
-            return response()->json(['message' => 'Product added to cart', 'quantity' => 1], 201);
+            // ⬅️ [تم التعريب]
+            return response()->json(['message' => 'تمت إضافة المنتج إلى السلة', 'quantity' => 1], 201);
         }
     }
 
@@ -103,14 +108,17 @@ class CartController extends Controller
 
         $cart = PosCart::with('product')->findOrFail($request->id);
         if ($cart->product->quantity <= 0) {
-            return response()->json(['message' => 'Insufficient stock available'], 400);
+            // ⬅️ [تم التعريب]
+            return response()->json(['message' => 'الكمية غير كافية في المخزون'], 400);
         }
         if ($cart->quantity == $cart->product->quantity) {
-            return response()->json(['message' => 'Cannot add more, stock limit reached'], 400);
+            // ⬅️ [تم التعريب]
+            return response()->json(['message' => 'لا يمكن إضافة المزيد، تم الوصول إلى حد المخزون'], 400);
         }
         $cart->quantity = $cart->quantity + 1;
         $cart->save();
-        return response()->json(['message' => 'Cart Updated successfully'], 200);
+        // ⬅️ [تم التعريب]
+        return response()->json(['message' => 'تم تحديث السلة بنجاح'], 200);
     }
     public function decrement(Request $request)
     {
@@ -119,11 +127,13 @@ class CartController extends Controller
         ]);
         $cart = PosCart::findOrFail($request->id);
         if ($cart->quantity <= 1) {
-            return response()->json(['message' => 'Quantity cannot be less than 1.'], 400);
+            // ⬅️ [تم التعريب]
+            return response()->json(['message' => 'لا يمكن أن تكون الكمية أقل من 1'], 400);
         }
         $cart->quantity = $cart->quantity - 1;
         $cart->save();
-        return response()->json(['message' => 'Cart Updated successfully'], 200);
+        // ⬅️ [تم التعريب]
+        return response()->json(['message' => 'تم تحديث السلة بنجاح'], 200);
     }
     public function delete(Request $request)
     {
@@ -134,16 +144,19 @@ class CartController extends Controller
         $cart = PosCart::findOrFail($request->id);
         $cart->delete();
 
-        return response()->json(['message' => 'Item successfully deleted'], 200);
+        // ⬅️ [تم التعريب]
+        return response()->json(['message' => 'تم حذف المنتج من السلة بنجاح'], 200);
     }
     public function empty()
     {
         $deletedCount = PosCart::where('user_id', auth()->id())->delete();
 
         if ($deletedCount > 0) {
-            return response()->json(['message' => 'Cart successfully cleared'], 200);
+            // ⬅️ [تم التعريب]
+            return response()->json(['message' => 'تم تفريغ السلة بنجاح'], 200);
         }
 
-        return response()->json(['message' => 'Cart is already empty'], 204);
+        // ⬅️ [تم التعريب]
+        return response()->json(['message' => 'السلة فارغة بالفعل'], 204);
     }
 }
