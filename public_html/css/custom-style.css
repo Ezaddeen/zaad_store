@@ -1,0 +1,228 @@
+/* =======================================================
+   الملف: custom-style.css (الإصلاح الشامل والنهائي لعرض الأيقونات)
+   ======================================================= */
+
+/* ========= theme (تنسيقاتك الأصلية) - بدون تغيير ========= */
+.sidebar-dark-lightblue .nav-sidebar>.nav-item>.nav-link.active,
+.sidebar-light-lightblue .nav-sidebar>.nav-item>.nav-link.active {
+    background-color: #8b9ee9 !important;
+}
+.text-lightblue { color: #6982e6 !important; }
+.bg-gradient-primary { background: #4a6aeb linear-gradient(180deg, #8b9ee9, #778ee9) repeat-x !important; }
+.bg-gradient-primary.btn:hover { background: #2a3b81 linear-gradient(180deg, #6a78b1, #48568d) repeat-x !important; border-color: #6a78b1 !important; }
+.bg-primary { background: #8b9ee9 !important; }
+.btn-lightblue { color: #8b9ee9 !important; }
+a { color: #162c83; }
+.btn-lightblue:hover { background: #2a3b81 linear-gradient(180deg, #6a78b1, #48568d) repeat-x !important; border-color: #070808 !important; }
+.sidebar-light-lightblue { background-color: #b9c6fb !important; box-shadow: none !important; }
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
+    background-color: aliceblue !important;
+}
+.elevation-3 { background: aliceblue !important; }
+.preloader { background-color: aliceblue !important; }
+
+.site-logo-placeholder { width: auto; max-width: 260px; max-height: 80px; }
+.user-cart .card { height: 400px; }
+.user-cart .qty { width: 45px; float: left; }
+.order-product .item { float: left; border: 1px solid #ccc; border-radius: 3px; background: #fff; margin: 0 2px 4px 2px; }
+.order-product .item img { width: 100px; height: 100px; max-width: 100%; }
+.order-product .item h5 { font-size: 13px; text-align: center; }
+.product-list .product-img { max-width: 70px; max-height: 70px; }
+
+.select2-container--default .select2-selection--single { height: calc(1.5em + 0.75rem + 2px) !important; }
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; -webkit-transition: .4s; transition: .4s; }
+input:checked+.slider { background-color: #667fe4; }
+input:focus+.slider { box-shadow: 0 0 1px #667fe4; }
+input:checked+.slider:before { -webkit-transform: translateX(20px); -ms-transform: translateX(20px); transform: translateX(20px); }
+.slider.round { border-radius: 20px; }
+.slider.round:before { border-radius: 50%; }
+
+
+/* =======================================================
+   إصلاح الاتجاه RTL لـ AdminLTE
+   ======================================================= */
+
+/* الاتجاه العام */
+html, body {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* الشريط الجانبي (تثبيت موقعه على اليمين) */
+.main-sidebar {
+  right: 0 !important;
+  left: auto !important;
+  float: right !important;
+  /* نزيل transform من هنا لنتجنب التعارض */
+  transform: none !important; 
+}
+
+/* منطقة المحتوى والشريط العلوي والسفلي في الوضع المفتوح */
+.content-wrapper,
+.main-header,
+.main-footer {
+  margin-right: 250px !important;
+  margin-left: 0 !important;
+}
+.main-footer { text-align: right !important; }
+
+/* === إصلاح موقع أزرار الـ Navbar وعلامة المتجر === */
+.navbar-nav { flex-direction: row-reverse !important; }
+.nav-link[data-widget="pushmenu"] { margin-right: unset !important; margin-left: 0 !important; }
+.brand-link { text-align: right !important; padding-left: 1rem !important; padding-right: 0.5rem !important; }
+.brand-image { margin-left: 0.5rem !important; margin-right: 0 !important; }
+.nav-sidebar .nav-link { text-align: right !important; padding-right: 1rem !important; }
+.nav-sidebar .nav-icon { margin-left: 10px !important; margin-right: 0 !important; }
+.card, .card-header, .card-body { text-align: right !important; }
+.brand-link, .user-panel { text-align: right !important; }
+.modal-content { direction: rtl !important; text-align: right !important; }
+.form-group, label, input, select, textarea { text-align: right !important; direction: rtl !important; }
+.fa, .fas, .far, .fab { margin-left: .25rem; margin-right: 0; }
+
+/* ====================================================
+   🛑 الإصلاح الحاسم لمشاكل التصغير (Sidebar Collapse) والتحجيم
+   ==================================================== */
+
+/* هامش المحتوى والشريط السفلي عند التصغير */
+body.sidebar-collapse .content-wrapper, 
+body.sidebar-collapse .main-footer, 
+body.sidebar-collapse .main-header {
+    margin-right: 4.6rem !important; /* الهامش عند التصغير */
+    margin-left: 0 !important; /* إلغاء أي هامش أيسر متبقي */
+}
+
+/* تثبيت عرض الشريط الجانبي في وضع التصغير */
+@media (min-width: 992px) {
+    /* **الإصلاح النهائي لهامش المحتوى المفتوح والمغلق:** */
+    body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.sidebar-collapse) .content-wrapper,
+    body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.sidebar-collapse) .main-footer,
+    body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.sidebar-collapse) .main-header {
+        margin-right: 250px !important;
+        margin-left: 0 !important;
+    }
+    
+    /* تثبيت الهوامش في وضع الشريط الجانبي المصغر (Sidebar Collapsed) */
+    body.sidebar-mini.sidebar-collapse .content-wrapper,
+    body.sidebar-mini.sidebar-collapse .main-footer,
+    body.sidebar-mini.sidebar-collapse .main-header {
+        margin-right: 4.6rem !important;
+        margin-left: 0 !important;
+    }
+
+
+    /* 🚀 الإصلاح الحاسم لعرض الشريط الجانبي نفسه 🚀 */
+    body.sidebar-mini.sidebar-collapse .main-sidebar, 
+    body.sidebar-mini.sidebar-collapse .main-sidebar::before {
+        width: 4.6rem !important; /* **فرض عرض الأيقونات** */
+        transform: none !important; /* إلغاء أي تحويل */
+        left: auto !important; /* تثبيت الموقع */
+        right: 0 !important;
+    }
+}
+
+/* إخفاء النص عند التصغير وتوسيط الأيقونات */
+body.sidebar-mini.sidebar-collapse .nav-sidebar .nav-link p,
+body.sidebar-mini.sidebar-collapse .nav-sidebar .right {
+    display: none !important; 
+}
+
+/* توسيط الأيقونات */
+body.sidebar-mini.sidebar-collapse .nav-sidebar .nav-link {
+    text-align: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* إخفاء نص الشعار */
+body.sidebar-mini.sidebar-collapse .brand-text {
+    display: none !important;
+}
+
+/* إصلاح التحويم (Hover) */
+body.sidebar-mini.sidebar-collapse .main-sidebar:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    width: 250px !important;
+    transform: none !important; 
+    right: 0 !important;
+    left: auto !important;
+}
+
+
+/* === دعم الاتجاه RTL في الشاشات الصغيرة (Responsive) === */
+@media (max-width: 991.98px) {
+  .main-sidebar {
+    right: 0 !important;
+    left: auto !important;
+    transform: translateX(100%);
+  }
+  body.sidebar-open .main-sidebar {
+    transform: translateX(0);
+  }
+  .main-header,
+  .content-wrapper,
+  .main-footer {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+  body.sidebar-open .content-wrapper,
+  body.sidebar-open .main-footer {
+    margin-right: 250px !important;
+    margin-left: 0 !important;
+  }
+}/* =======================================================
+   ⭐ تعديلات الشريط العلوي (Navbar) المطلوبة ⭐
+   ======================================================= */
+
+/* --- 1. تثبيت الشريط العلوي --- */
+/* يجب إضافة كلاس "layout-navbar-fixed" إلى وسم <body> لتفعيل هذا */
+body.layout-navbar-fixed .main-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1037;
+}
+
+/* إضافة مساحة للمحتوى لكي لا يختفي خلف الشريط المثبت */
+body.layout-navbar-fixed .content-wrapper {
+    padding-top: 57px; /* يمكنك تعديل هذه القيمة إذا كان ارتفاع الشريط مختلفًا */
+}
+
+
+/* --- 2. توسيط الأيقونات داخل الشريط العلوي --- */
+.main-header .navbar-nav {
+    width: 100%; /* جعل حاوية الأيقونات تأخذ عرض الشريط بالكامل */
+    justify-content: center; /* توسيط الأيقونات أفقيًا */
+}
+
+/* إزالة الهوامش التلقائية التي قد تدفع الأيقونات لأحد الجانبين */
+.main-header .navbar-nav.ml-auto, 
+.main-header .navbar-nav.mr-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+/* =======================================================
+   ⭐ تعديلات التصميم المطلوبة (الشعار وزر القائمة) ⭐
+   ======================================================= */
+
+/* --- 1. تغيير خلفية الشعار لتطابق الشريط الجانبي --- */
+.brand-link {
+    background-color: #b9c6fb !important; /* نفس لون الشريط الجانبي */
+    border-bottom-color: #b9c6fb !important; /* إخفاء الخط الفاصل */
+}
+
+/* --- 2. نقل زر إخفاء الشريط الجانبي إلى اليمين --- */
+.main-header .navbar-nav {
+    margin-right: 0 !important; /* إلغاء الهامش الذي يدفع الأزرار يسارًا */
+}
+
+/* استخدام خاصية الترتيب لوضع زر القائمة في البداية (أقصى اليمين) */
+.nav-item a[data-widget="pushmenu"] {
+    order: -1; 
+}

@@ -7,6 +7,8 @@ export default defineConfig({
         laravel({
             input: "resources/js/app.jsx",
             refresh: true,
+            // [تمت الإضافة] تحديد المجلد العام الجديد
+            publicDirectory: 'public_html',
         }),
         react(),
     ],

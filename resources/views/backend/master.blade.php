@@ -17,10 +17,10 @@
 
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css' ) }}">
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet"
-        href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+        href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' ) }}">
     <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/jqvmap/jqvmap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
@@ -93,9 +93,32 @@
     </style>
     @stack('style')
 
-    
-    @viteReactRefresh
-    @vite('resources/js/app.jsx')
+    {{-- ================================================== --}}
+    {{--                الحل النووي والنهائي                --}}
+    {{-- ================================================== --}}
+    @php
+        // المسار الصحيح لملف المانيفست داخل public_html
+        // ملاحظة: public_path() تشير إلى مجلد public_html بسبب التعديل الذي قمنا به في AppServiceProvider
+        $manifestPath = public_path('build/manifest.json');
+        if (file_exists($manifestPath)) {
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+        }
+    @endphp
+
+    @if (isset($manifest) && isset($manifest['resources/js/app.jsx']))
+        {{-- هذه هي بيئة الإنتاج (على الخادم) --}}
+        <script type="module" src="{{ asset('build/' . $manifest['resources/js/app.jsx']['file']) }}"></script>
+        @if (isset($manifest['resources/js/app.jsx']['css']))
+            <link rel="stylesheet" href="{{ asset('build/' . $manifest['resources/js/app.jsx']['css'][0]) }}">
+        @endif
+    @else
+        {{-- هذه هي بيئة التطوير (للتشغيل المحلي فقط) --}}
+        @viteReactRefresh
+        @vite('resources/js/app.jsx')
+    @endif
+    {{-- ================================================== --}}
+    {{--              نهاية الحل النووي والنهائي             --}}
+    {{-- ================================================== --}}
 
 </head>
 

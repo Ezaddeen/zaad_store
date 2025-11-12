@@ -27,7 +27,8 @@ class BrandController extends Controller
             $brands = Brand::latest()->get();
             return DataTables::of($brands)
                 ->addIndexColumn()
-                ->addColumn('image', fn($data) => '<img src="' . asset('storage/' . $data->image) . '" loading="lazy" alt="' . $data->name . '" class="img-thumb img-fluid" onerror="this.onerror=null; this.src=\'' . asset('assets/images/no-image.png') . '\';" height="80" width="60" />')
+                // [تم التعديل]
+                ->addColumn('image', fn($data) => '<img src="' . asset($data->image) . '" loading="lazy" alt="' . $data->name . '" class="img-thumb img-fluid" onerror="this.onerror=null; this.src=\'' . asset('assets/images/no-image.png') . '\';" height="80" width="60" />')
                 ->addColumn('name', fn($data) => $data->name)
                 ->addColumn('status', fn($data) => $data->status
                     ? '<span class="badge bg-primary">Active</span>'
@@ -80,7 +81,8 @@ class BrandController extends Controller
         ]);
         $brand = Brand::create($request->except('brand_image'));
         if ($request->hasFile("brand_image")) {
-            $brand->image = $this->fileHandler->fileUploadAndGetPath($request->file("brand_image"), "/public/media/brands");
+            // [تم التعديل]
+            $brand->image = $this->fileHandler->fileUploadAndGetPath($request->file("brand_image"), "/media/brands");
             $brand->save();
         }
 
@@ -122,9 +124,11 @@ class BrandController extends Controller
         $oldImage = $brand->image;
         $brand->update($request->except('brand_image'));
         if ($request->hasFile("brand_image")) {
-            $brand->image = $this->fileHandler->fileUploadAndGetPath($request->file("brand_image"), "/public/media/brands");
+            // [تم التعديل]
+            $brand->image = $this->fileHandler->fileUploadAndGetPath($request->file("brand_image"), "/media/brands");
             $brand->save();
-            $this->fileHandler->secureUnlink($oldImage);
+            // [تم التعديل]
+            $this->fileHandler->securePublicUnlink($oldImage);
         }
 
         return redirect()->route('backend.admin.brands.index')->with('success', 'Brand updated successfully!');
@@ -138,7 +142,8 @@ class BrandController extends Controller
         abort_if(!auth()->user()->can('brand_delete'), 403);
         $brand = Brand::findOrFail($id);
         if ($brand->image != '') {
-            $this->fileHandler->secureUnlink($brand->image);
+            // [تم التعديل]
+            $this->fileHandler->securePublicUnlink($brand->image);
         }
         $brand->delete();
         return redirect()->back()->with('success', 'Brand Deleted Successfully');

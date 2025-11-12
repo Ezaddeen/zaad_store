@@ -14,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // [تمت الإضافة] إخبار Laravel بالمسار العام الجديد
+        $this->app->bind('path.public', function() {
+          
+        });
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Trait\FileHandler;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+
 class CategoryController extends Controller
 {
     public $fileHandler;
@@ -26,7 +27,8 @@ class CategoryController extends Controller
             $categories = Category::latest()->get();
             return DataTables::of($categories)
                 ->addIndexColumn()
-                ->addColumn('image', fn($data) => '<img src="' . asset('storage/' . $data->image) . '" loading="lazy" alt="' . $data->name . '" class="img-thumb img-fluid" onerror="this.onerror=null; this.src=\'' . asset('assets/images/no-image.png') . '\';" height="80" width="60" />')
+                // [تم التعديل]
+                ->addColumn('image', fn($data) => '<img src="' . asset($data->image) . '" loading="lazy" alt="' . $data->name . '" class="img-thumb img-fluid" onerror="this.onerror=null; this.src=\'' . asset('assets/images/no-image.png') . '\';" height="80" width="60" />')
                 ->addColumn('name', fn($data) => $data->name)
                 ->addColumn('status', fn($data) => $data->status
                     ? '<span class="badge bg-primary">Active</span>'
@@ -77,7 +79,8 @@ class CategoryController extends Controller
         ]);
         $category = Category::create($request->except('category_image'));
         if ($request->hasFile("category_image")) {
-            $category->image = $this->fileHandler->fileUploadAndGetPath($request->file("category_image"), "/public/media/categories");
+            // [تم التعديل]
+            $category->image = $this->fileHandler->fileUploadAndGetPath($request->file("category_image"), "/media/categories");
             $category->save();
         }
 
@@ -103,6 +106,8 @@ class CategoryController extends Controller
         return view('backend.categories.edit', compact('category'));
     }
 
+
+
     /**
      * Update the specified resource in storage.
      */
@@ -119,9 +124,11 @@ class CategoryController extends Controller
         $oldImage = $category->image;
         $category->update($request->except('category_image'));
         if ($request->hasFile("category_image")) {
-            $category->image = $this->fileHandler->fileUploadAndGetPath($request->file("category_image"), "/public/media/categories");
+            // [تم التعديل]
+            $category->image = $this->fileHandler->fileUploadAndGetPath($request->file("category_image"), "/media/categories");
             $category->save();
-            $this->fileHandler->secureUnlink($oldImage);
+            // [تم التعديل]
+            $this->fileHandler->securePublicUnlink($oldImage);
         }
 
         return redirect()->route('backend.admin.categories.index')->with('success', 'Category updated successfully!');
@@ -135,7 +142,8 @@ class CategoryController extends Controller
         abort_if(!auth()->user()->can('category_delete'), 403);
         $category = Category::findOrFail($id);
         if ($category->image != '') {
-            $this->fileHandler->secureUnlink($category->image);
+            // [تم التعديل]
+            $this->fileHandler->securePublicUnlink($category->image);
         }
         $category->delete();
         return redirect()->back()->with('success', 'Category Deleted Successfully');

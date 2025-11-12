@@ -37,13 +37,15 @@ class ProductController extends Controller
             $products = Product::latest()->get();
             return DataTables::of($products)
                 ->addIndexColumn()
-                ->addColumn('image', fn($data) => '<img src="' . asset('storage/' . $data->image) . '" loading="lazy" alt="' . $data->name . '" class="img-thumb img-fluid" onerror="this.onerror=null; this.src=\'' . asset('assets/images/no-image.png') . '\';" height="80" width="60" />')
+                // [تم التعديل]
+                ->addColumn('image', fn($data) => '<img src="' . asset($data->image) . '" loading="lazy" alt="' . $data->name . '" class="img-thumb img-fluid" onerror="this.onerror=null; this.src=\'' . asset('assets/images/no-image.png') . '\';" height="80" width="60" />')
                 ->addColumn('name', fn($data) => $data->name)
                 ->addColumn(
                     'price',
                     fn($data) => $data->discounted_price .
                         ($data->price > $data->discounted_price
-                            ? '<br><del>' . $data->price . '</del>'
+                            ? '  
+<del>' . $data->price . '</del>'
                             : '')
                 )
                 ->addColumn('quantity', fn($data) => $data->quantity . ' ' . optional($data->unit)->short_name)
@@ -120,7 +122,8 @@ class ProductController extends Controller
         $validated = $request->validated();
         $product = Product::create($validated);
         if ($request->hasFile("product_image")) {
-            $product->image = $this->fileHandler->fileUploadAndGetPath($request->file("product_image"), "/public/media/products");
+            // [تم التعديل]
+            $product->image = $this->fileHandler->fileUploadAndGetPath($request->file("product_image"), "/media/products");
             $product->save();
         }
 
@@ -162,9 +165,11 @@ class ProductController extends Controller
         $oldImage = $product->image;
         $product->update($validated);
         if ($request->hasFile("product_image")) {
-            $product->image = $this->fileHandler->fileUploadAndGetPath($request->file("product_image"), "/public/media/products");
+            // [تم التعديل]
+            $product->image = $this->fileHandler->fileUploadAndGetPath($request->file("product_image"), "/media/products");
             $product->save();
-            $this->fileHandler->secureUnlink($oldImage);
+            // [تم التعديل]
+            $this->fileHandler->securePublicUnlink($oldImage);
         }
 
         return redirect()->route('backend.admin.products.index')->with('success', 'Product updated successfully!');
@@ -179,7 +184,8 @@ class ProductController extends Controller
         abort_if(!auth()->user()->can('product_delete'), 403);
         $product = Product::findOrFail($id);
         if ($product->image != '') {
-            $this->fileHandler->secureUnlink($product->image);
+            // [تم التعديل]
+            $this->fileHandler->securePublicUnlink($product->image);
         }
         $product->delete();
         return redirect()->back()->with('success', 'Product Deleted Successfully');
