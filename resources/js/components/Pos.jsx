@@ -28,6 +28,9 @@ export default function Pos() {
     const [loading, setLoading] = useState(false);
     const fullDomainWithPort = `${protocol}//${hostname}${port ? `:${port}` : ""}`;
 
+    // ==================================================
+    // ⬇️            التعديل الأول: دالة getProducts           ⬇️
+    // ==================================================
     const getProducts = useCallback(async (search = "", page = 1, barcode = "") => {
         setLoading(true);
         try {
@@ -50,8 +53,12 @@ export default function Pos() {
             console.error("خطأ أثناء جلب المنتجات:", error);
         } finally {
             setLoading(false);
+            // هذا السطر يقوم بتفريغ حقل الباركود بعد البحث
+            if (barcode !== "") {
+                setSearchBarcode("");
+            }
         }
-    }, []);
+    }, []); // تم إزالة addProductToCart من هنا لتجنب حلقة لا نهائية محتملة مع useCallback
 
     const getUpdatedProducts = useCallback(async () => {
         try {
@@ -72,8 +79,8 @@ export default function Pos() {
         try {
             const res = await axios.get("/admin/cart");
             const data = res.data;
-            setTotal(data?.total || 0); // إضافة قيمة افتراضية
-            setCarts(data?.carts || []); // إضافة قيمة افتراضية
+            setTotal(data?.total || 0);
+            setCarts(data?.carts || []);
         } catch (error) {
             console.error("خطأ أثناء جلب السلة:", error);
         }
@@ -98,23 +105,28 @@ export default function Pos() {
         setDue(dueAmount?.toFixed(2));
     }, [orderDiscount, paid, total]);
     
+    // ==================================================
+    // ⬇️        التعديل الثاني: دمج تأثيرات البحث         ⬇️
+    // ==================================================
     useEffect(() => {
+        // البحث بالاسم
         if (searchQuery) {
             setProducts([]);
             getProducts(searchQuery, 1, "");
-        } else if (!searchQuery && !searchBarcode) {
-             setProducts([]);
-             getProducts("", 1, "");
-        }
-        setSearchBarcode("");
-    }, [searchQuery]);
-
-    useEffect(() => {
-        if (searchBarcode) {
+            setSearchBarcode(""); // تفريغ حقل الباركود عند البحث بالاسم
+        } 
+        // البحث بالباركود
+        else if (searchBarcode) {
             setProducts([]);
             getProducts("", 1, searchBarcode);
         }
-    }, [searchBarcode]);
+        // الحالة الافتراضية (لا يوجد بحث)
+        else {
+             setProducts([]);
+             getProducts("", 1, "");
+        }
+    }, [searchQuery, searchBarcode, getProducts]); // مراقبة كلا المتغيرين
+
     
     // منطق التمرير اللانهائي
     useEffect(() => {
@@ -124,7 +136,6 @@ export default function Pos() {
 
              if (!scrollElement) return;
 
-             // اكتشاف نهاية التمرير في حاوية المنتجات
              if (scrollElement.scrollTop + scrollElement.clientHeight >= scrollElement.scrollHeight - 100) {
                  if (currentPage < totalPages && !loading) {
                      setCurrentPage((prev) => prev + 1);
@@ -148,12 +159,10 @@ export default function Pos() {
             .then((res) => {
                 setCartUpdated(!cartUpdated);
                 playSound(SuccessSound);
-                // رسالة عربية
                 toast.success(res?.data?.message || "تمت إضافة المنتج بنجاح"); 
             })
             .catch((err) => {
                 playSound(WarningSound);
-                // رسالة عربية
                 toast.error(err.response.data.message || "حدث خطأ أثناء الإضافة إلى السلة"); 
             });
     }
@@ -161,7 +170,7 @@ export default function Pos() {
     function cartEmpty() {
         if (total <= 0) return;
         Swal.fire({
-            title: "هل أنت متأكد أنك تريد مسح السلة؟", // تم تعديله إلى "مسح السلة"
+            title: "هل أنت متأكد أنك تريد مسح السلة؟",
             showDenyButton: true,
             confirmButtonText: "نعم", 
             denyButtonText: "لا", 
@@ -180,12 +189,10 @@ export default function Pos() {
                         setOrderDiscount(0);
                         setPaid(0);
                         playSound(SuccessSound);
-                        // رسالة عربية
                         toast.success(res?.data?.message || "تم مسح السلة بنجاح"); 
                     })
                     .catch((err) => {
                         playSound(WarningSound);
-                        // رسالة عربية
                         toast.error(err.response.data.message || "حدث خطأ أثناء مسح السلة"); 
                     });
             }
@@ -195,7 +202,6 @@ export default function Pos() {
     function orderCreate() {
         if (total <= 0) return;
         if (!customerId) {
-            // رسالة عربية
             toast.error("يرجى اختيار العميل أولاً"); 
             return;
         }
@@ -204,7 +210,7 @@ export default function Pos() {
         
         Swal.fire({
             title: `هل أنت متأكد أنك تريد إتمام هذا الطلب؟   
-المتبقي: ${formattedDue}`, // تم تعديل إلى "إتمام هذا الطلب"
+المتبقي: ${formattedDue}`,
             showDenyButton: true,
             confirmButtonText: "نعم", 
             denyButtonText: "لا", 
@@ -228,12 +234,10 @@ export default function Pos() {
                         setOrderDiscount(0);
                         setPaid(0);
                         setTotal(0);
-                        // رسالة عربية
                         toast.success(res?.data?.message || "تم إنشاء الطلب بنجاح"); 
                         window.location.href = `orders/pos-invoice/${res?.data?.order?.id}`;
                     })
                     .catch((err) => {
-                        // رسالة عربية
                         toast.error(err.response.data.message || "حدث خطأ أثناء إنشاء الطلب");
                     });
             }
@@ -248,7 +252,7 @@ export default function Pos() {
                         <div className="col-md-6 col-lg-5 mb-2">
                             <div className="row mb-2">
                                 <div className="col-12">
-                                    <CustomerSelect setCustomerId={setCustomerId} /> {/* (يجب تعريب هذا المكون يدوياً) */}
+                                    <CustomerSelect setCustomerId={setCustomerId} />
                                 </div>
                             </div>
 
@@ -256,7 +260,7 @@ export default function Pos() {
                                 carts={carts}
                                 setCartUpdated={setCartUpdated}
                                 cartUpdated={cartUpdated}
-                            /> {/* (يجب تعريب هذا المكون يدوياً) */}
+                            />
 
                             <div className="card">
                                 <div className="card-body">
@@ -288,7 +292,7 @@ export default function Pos() {
                                         </div>
                                     </div>
                                     <div className="row text-bold mb-1">
-                                        <div className="col">تطبيق خصم الكسور:</div> {/* النص العربي المباشر */}
+                                        <div className="col">تطبيق خصم الكسور:</div>
                                         <div className="col text-right mr-2">
                                             <input
                                                 type="checkbox"
@@ -347,7 +351,7 @@ export default function Pos() {
                                         className="btn bg-gradient-danger btn-block text-white text-bold"
                                         disabled={total <= 0}
                                     >
-                                        مسح السلة {/* تم التعديل */}
+                                        مسح السلة
                                     </button>
                                 </div>
                                 <div className="col">
@@ -357,7 +361,7 @@ export default function Pos() {
                                         className="btn bg-gradient-primary btn-block text-white text-bold"
                                         disabled={total <= 0}
                                     >
-                                        إتمام الطلب {/* تم التعديل */}
+                                        إتمام الطلب
                                     </button>
                                 </div>
                             </div>
