@@ -1,6 +1,5 @@
 @extends('backend.master')
 
-{{-- ⬅️ تعريب العنوان: 'Sale' -> 'المبيعات' --}}
 @section('title', __('orders.sale'))
 
 @section('content')
@@ -12,27 +11,20 @@
           <table id="datatables" class="table table-hover">
             <thead>
               <tr>
-                {{-- ⬅️ رؤوس الأعمدة --}}
                 <th data-orderable="false">#</th>
-                
-                {{-- ⬅️ مفاتيح خاصة بالمبيعات --}}
                 <th>{{ __('orders.sale_id') }}</th>
                 <th>{{ __('orders.customer') }}</th> 
                 <th>{{ __('orders.item') }}</th>
-                
-                {{-- ⬅️ مفاتيح مالية --}}
                 <th>{{ __('orders.sub_total') }} {{currency()->symbol??''}}</th>
                 <th>{{ __('orders.discount') }} {{currency()->symbol??''}}</th>
                 <th>{{ __('common.total') }} {{currency()->symbol??''}}</th>
                 <th>{{ __('orders.paid') }} {{currency()->symbol??''}}</th>
                 <th>{{ __('common.due') }} {{currency()->symbol??''}}</th>
-                
-                {{-- ⬅️ مفاتيح عامة --}}
                 <th>{{ __('common.status') }}</th>
                 <th data-orderable="false">{{ __('common.action') }}</th>
               </tr>
             </thead>
-            {{-- لا تحتاج إلى تعريب هنا لأن البيانات يتم جلبها عبر AJAX --}}
+            {{-- الجسم فارغ لأنه يتم ملؤه عبر AJAX --}}
           </table>
         </div>
       </div>
@@ -44,7 +36,6 @@
 @push('script')
 
 <script type="text/javascript">
-  // لا توجد حاجة لتعريب الكود، حيث أن النصوص المعروضة يتم تعريبها في الـ HTML
   $(function() {
     let table = $('#datatables').DataTable({
       processing: true,
@@ -56,6 +47,31 @@
       ajax: {
         url: "{{ route('backend.admin.orders.index') }}"
       },
+
+      // ==================================================
+      // ⬇️            هذا هو الكود الجديد للتعريب            ⬇️
+      // ==================================================
+      language: {
+          "decimal":        "",
+          "emptyTable":     "لا توجد بيانات في الجدول",
+          "info":           "عرض _START_ إلى _END_ من _TOTAL_ مدخلات",
+          "infoEmpty":      "عرض 0 إلى 0 من 0 مدخلات",
+          "infoFiltered":   "(تمت تصفيتها من _MAX_ إجمالي المدخلات)",
+          "lengthMenu":     "عرض _MENU_ مدخلات",
+          "loadingRecords": "جاري التحميل...",
+          "processing":     "جاري المعالجة...",
+          "search":         "بحث:",
+          "zeroRecords":    "لم يتم العثور على سجلات مطابقة",
+          "paginate": {
+              "first":      "الأول",
+              "last":       "الأخير",
+              "next":       "التالي",
+              "previous":   "السابق"
+          }
+      },
+      // ==================================================
+      // ⬅️                نهاية الكود الجديد                ⬅️
+      // ==================================================
 
       columns: [{
           data: 'DT_RowIndex',

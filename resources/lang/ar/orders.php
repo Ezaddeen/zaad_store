@@ -28,6 +28,7 @@ return [
     // Placeholder
     'placeholder_amount' => 'أدخل المبلغ',
     'sale' => 'البيع',
+    'sale_date' => 'تاريخ البيع',
 ];
 
 // ملاحظة: المفاتيح 'total' و 'due' و 'collection_amount' كانت مكررة في نهاية ملفك، وتم الإبقاء على النسخة الأولى فقط.

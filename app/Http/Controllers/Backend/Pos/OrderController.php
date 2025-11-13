@@ -23,26 +23,35 @@ class OrderController extends Controller
             return DataTables::of($orders)
                 ->addIndexColumn()
                 ->addColumn('saleId', fn($data) => "#" . $data->id)
-                ->addColumn('customer', fn($data) => $data->customer->name ?? '-')
+                ->addColumn('customer', fn($data) => $data->customer->name ?? '-') // ⬅️ تم إرجاع هذا السطر إلى حالته الأصلية
                 ->addColumn('item', fn($data) => $data->total_item)
                 ->addColumn('sub_total', fn($data) => number_format($data->sub_total, 2, '.', ','))
                 ->addColumn('discount', fn($data) => number_format($data->discount, 2, '.', ','))
                 ->addColumn('total', fn($data) => number_format($data->total, 2, '.', ','))
                 ->addColumn('paid', fn($data) => number_format($data->paid, 2, '.', ','))
                 ->addColumn('due', fn($data) => number_format($data->due, 2, '.', ','))
+                // ==================================================
+                // ⬇️            التعديل الأول: تعريب الحالة            ⬇️
+                // ==================================================
                 ->addColumn('status', fn($data) => $data->status
-                    ? '<span class="badge bg-primary">Paid</span>'
-                    : '<span class="badge bg-danger">Due</span>')
+                    ? '<span class="badge bg-primary">مدفوع</span>'
+                    : '<span class="badge bg-danger">مستحق</span>')
+                // ==================================================
+                // ⬇️           التعديل الثاني: تعريب الأزرار           ⬇️
+                // ==================================================
                 ->addColumn('action', function ($data) {
                     $buttons = '';
 
-                    $buttons .= '<a class="btn btn-success btn-sm" href="' . route('backend.admin.orders.invoice', $data->id) . '"><i class="fas fa-file-invoice"></i> Invoice</a>';
+                    $buttons .= '<a class="btn btn-success btn-sm" href="' . route('backend.admin.orders.invoice', $data->id) . '"><i class="fas fa-file-invoice"></i> فاتورة</a>';
 
-                    $buttons .= '<a class="btn btn-secondary btn-sm" href="' . route('backend.admin.orders.pos-invoice', $data->id) . '"><i class="fas fa-file-invoice"></i> Pos Invoice</a>';
+                    $buttons .= '<a class="btn btn-secondary btn-sm" href="' . route('backend.admin.orders.pos-invoice', $data->id) . '"><i class="fas fa-file-invoice"></i> فاتورة POS</a>';
+                    
                     if (!$data->status) {
-                        $buttons .= '<a class="btn btn-warning btn-sm" href="' . route('backend.admin.due.collection', $data->id) . '"><i class="fas fa-receipt"></i> Due Collection</a>';
+                        $buttons .= '<a class="btn btn-warning btn-sm" href="' . route('backend.admin.due.collection', $data->id) . '"><i class="fas fa-receipt"></i> تحصيل المستحق</a>';
                     }
-                    $buttons .= '<a class="btn btn-primary btn-sm" href="' . route('backend.admin.orders.transactions', $data->id) . '"><i class="fas fa-exchange-alt"></i> Transactions</a>';
+
+                    $buttons .= '<a class="btn btn-primary btn-sm" href="' . route('backend.admin.orders.transactions', $data->id) . '"><i class="fas fa-exchange-alt"></i> المعاملات</a>';
+                    
                     return $buttons;
                 })
                 ->rawColumns(['saleId', 'customer', 'item', 'sub_total', 'discount', 'total', 'paid', 'due', 'status', 'action'])
@@ -64,6 +73,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        // الكود الأصلي بدون تغيير في هذه الدالة
         $request->validate([
             'customer_id' => [
                 'required',
@@ -132,6 +142,8 @@ class OrderController extends Controller
         $carts = PosCart::where('user_id', auth()->id())->delete();
         return response()->json(['message' => 'Order completed successfully', 'order' => $order], 200);
     }
+
+    // ... (بقية الدوال تبقى كما هي بدون تغيير)
 
     /**
      * Display the specified resource.
