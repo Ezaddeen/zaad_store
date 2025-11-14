@@ -62,12 +62,18 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 Route::prefix('admin')->as('backend.admin.')->middleware(['admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('products', ProductController::class);
+
+    // ==================================================
+    // ⬇️            هذا هو التعديل الوحيد            ⬇️
+    // تم نقل السطر إلى هنا ليكون داخل مجموعة الـ admin
+    // ==================================================
+    Route::post('products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('products.bulk-delete');
+
     Route::resource('brands', BrandController::class);
     Route::resource('orders', OrderController::class);
     Route::resource('purchase', PurchaseController::class);
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
-    Route::resource('products', ProductController::class);
     Route::resource('units', UnitController::class);
     Route::resource('currencies', CurrencyController::class);
     Route::match(['get', 'post'], 'import/products', [ProductController::class,'import'])->name('products.import');

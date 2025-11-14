@@ -16,7 +16,7 @@ use App\Trait\FileHandler;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
-use Illuminate\Database\QueryException; // ⬅️ أضف هذا السطر
+use Illuminate\Database\QueryException;
 
 class ProductController extends Controller
 {
@@ -32,21 +32,24 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-
         abort_if(!auth()->user()->can('product_view'), 403);
         if ($request->ajax()) {
             $products = Product::latest()->get();
             return DataTables::of($products)
                 ->addIndexColumn()
-                // [تم التعديل]
+                // ==================================================
+                // ⬇️            1. تم إضافة هذا العمود الجديد            ⬇️
+                // ==================================================
+                ->addColumn('checkbox', function($row){
+                    return '<input type="checkbox" class="product-checkbox" value="'.$row->id.'">';
+                })
                 ->addColumn('image', fn($data) => '<img src="' . asset($data->image) . '" loading="lazy" alt="' . $data->name . '" class="img-thumb img-fluid" onerror="this.onerror=null; this.src=\'' . asset('assets/images/no-image.png') . '\';" height="80" width="60" />')
                 ->addColumn('name', fn($data) => $data->name)
                 ->addColumn(
                     'price',
                     fn($data) => $data->discounted_price .
                         ($data->price > $data->discounted_price
-                            ? '  
-<del>' . $data->price . '</del>'
+                            ? '  <del>' . $data->price . '</del>'
                             : '')
                 )
                 ->addColumn('quantity', fn($data) => $data->quantity . ' ' . optional($data->unit)->short_name)
@@ -76,7 +79,10 @@ class ProductController extends Controller
                     </div>
                   </div>';
                 })
-                ->rawColumns(['image', 'name', 'price', 'quantity', 'status', 'created_at', 'action'])
+                // ==================================================
+                // ⬇️    2. تم إضافة 'checkbox' إلى rawColumns    ⬇️
+                // ==================================================
+                ->rawColumns(['image', 'name', 'price', 'quantity', 'status', 'created_at', 'action', 'checkbox'])
                 ->toJson();
         }
         if ($request->wantsJson()) {
@@ -84,17 +90,12 @@ class ProductController extends Controller
                 'search' => 'required|string|max:255',
             ]);
 
-            // Initialize the query
             $products = Product::query();
-
-            // Apply filters based on the search term
             $products = $products->where(function ($query) use ($request) {
                 $query->where('name', 'LIKE', "%{$request->search}%")
                     ->orWhere('sku', $request->search);
             });
-            // Get the results
             $products = $products->get();
-            // Return the results as a JSON response
             return ProductResource::collection($products);
         }
         return view('backend.products.index');
@@ -105,7 +106,6 @@ class ProductController extends Controller
      */
     public function create()
     {
-
         abort_if(!auth()->user()->can('product_create'), 403);
         $brands = Brand::whereStatus(true)->get();
         $categories = Category::whereStatus(true)->get();
@@ -118,16 +118,13 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-
         abort_if(!auth()->user()->can('product_create'), 403);
         $validated = $request->validated();
         $product = Product::create($validated);
         if ($request->hasFile("product_image")) {
-            // [تم التعديل]
             $product->image = $this->fileHandler->fileUploadAndGetPath($request->file("product_image"), "/media/products");
             $product->save();
         }
-
         return redirect()->route('backend.admin.products.index')->with('success', 'Product created successfully!');
     }
 
@@ -144,9 +141,7 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-
         abort_if(!auth()->user()->can('product_update'), 403);
-
         $product = Product::findOrFail($id);
         $brands = Brand::whereStatus(true)->get();
         $categories = Category::whereStatus(true)->get();
@@ -159,20 +154,16 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, $id)
     {
-
         abort_if(!auth()->user()->can('product_update'), 403);
         $validated = $request->validated();
         $product = Product::findOrFail($id);
         $oldImage = $product->image;
         $product->update($validated);
         if ($request->hasFile("product_image")) {
-            // [تم التعديل]
             $product->image = $this->fileHandler->fileUploadAndGetPath($request->file("product_image"), "/media/products");
             $product->save();
-            // [تم التعديل]
             $this->fileHandler->securePublicUnlink($oldImage);
         }
-
         return redirect()->route('backend.admin.products.index')->with('success', 'Product updated successfully!');
     }
 
@@ -181,50 +172,65 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-
         abort_if(!auth()->user()->can('product_delete'), 403);
         $product = Product::findOrFail($id);
         if ($product->image != '') {
-            // [تم التعديل]
             $this->fileHandler->securePublicUnlink($product->image);
         }
         $product->delete();
         return redirect()->back()->with('success', 'Product Deleted Successfully');
     }
 
-    // ==================================================
-    // ⬅️        هذه هي الدالة المعدلة بالكامل        ⬅️
-    // ==================================================
     public function import(Request $request)
     {
         if ($request->query('download-demo')) {
             return Excel::download(new DemoProductsExport, 'demo_products.xlsx');
         }
-
         if ($request->isMethod('post') && $request->hasFile('file')) {
-            
             try {
                 Excel::import(new ProductsImport, $request->file('file'));
-                
                 return redirect()->back()->with('success', 'تم استيراد المنتجات بنجاح.');
-
             } catch (QueryException $e) {
-                
                 if ($e->errorInfo[1] == 1048) {
                     preg_match("/Column '(\w+)' cannot be null/", $e->getMessage(), $matches);
                     $columnName = $matches[1] ?? 'أحد الحقول المطلوبة';
-
                     $errorMessage = "فشل الاستيراد. لا يمكن أن يكون الحقل '{$columnName}' فارغاً. يرجى التحقق من ملف الإكسل والتأكد من عدم وجود خلايا فارغة في هذا العمود.";
                     return redirect()->back()->with('error', $errorMessage);
                 }
-
                 return redirect()->back()->with('error', 'حدث خطأ غير متوقع في قاعدة البيانات أثناء الاستيراد. يرجى التحقق من ملفك والمحاولة مرة أخرى.');
-
             } catch (\Exception $e) {
                 return redirect()->back()->with('error', 'حدث خطأ غير متوقع: ' . $e->getMessage());
             }
         }
-
         return view('backend.products.import');
+    }
+
+    // ==================================================
+    // ⬇️         3. تم إضافة هذه الدالة الجديدة بالكامل         ⬇️
+    // ==================================================
+    /**
+     * Remove multiple products from storage.
+     */
+    public function bulkDelete(Request $request)
+    {
+        abort_if(!auth()->user()->can('product_delete'), 403);
+
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        $ids = $request->input('ids');
+        $products = Product::whereIn('id', $ids)->get();
+
+        foreach ($products as $product) {
+            // هذا يضمن حذف الصورة المرتبطة بالمنتج أيضاً
+            if ($product->image) {
+                $this->fileHandler->securePublicUnlink($product->image);
+            }
+            $product->delete();
+        }
+
+        return response()->json(['message' => 'تم حذف المنتجات المحددة بنجاح.']);
     }
 }
