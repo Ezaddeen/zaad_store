@@ -6,6 +6,9 @@
 <section class="content">
     @can('dashboard_view')
     <div class="container-fluid">
+        {{-- ================================================== --}}
+        {{-- ⬇️ هذا هو الجزء الذي كان مفقوداً وتمت إعادته ⬇️ --}}
+        {{-- ================================================== --}}
         <div class="row">
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="info-box">
@@ -113,9 +116,13 @@
                 </div>
             </div>
         </div>
+        {{-- ================================================== --}}
+        {{-- ⬆️ نهاية الجزء الذي كان مفقوداً ⬆️ --}}
+        {{-- ================================================== --}}
 
+        {{-- هذا الجزء الخاص بالمخططات البيانية --}}
         <div class="row">
-            <div class="col-6">
+            <div class="col-md-6"> {{-- تم التعديل إلى col-md-6 ليتناسب مع الشاشات المختلفة --}}
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">{{ __('app.daily_total_sales') }} <small>{{ $dateRange }}</small></h5>
@@ -132,7 +139,7 @@
                 </div>
             </div>
 
-            <div class="col-6">
+            <div class="col-md-6"> {{-- تم التعديل إلى col-md-6 ليتناسب مع الشاشات المختلفة --}}
                 <div class="card">
                     <div class="card-header">
                         <h5>{{ __('app.monthly_total_sales') }} <small>{{ $currentYear }}</small></h5>
@@ -147,3 +154,62 @@
     @endcan
 </section>
 @endsection
+
+@push('script')
+{{-- تأكد من أن القالب الخاص بك يقوم بتحميل هذه المكتبات --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<script>
+$(function( ) {
+    // --- تهيئة منتقي التواريخ (Date Range Picker) ---
+    $('#reservation').daterangepicker({
+        opens: 'left'
+    }, function(start, end, label) {
+        const daterange = start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD');
+        window.location.href = "{{ route('backend.admin.dashboard') }}?daterange=" + daterange;
+    });
+
+    // --- تهيئة بيانات المخططات من الـ Controller ---
+    const dailyLabels = @json($dates);
+    const dailyData = @json($totalAmounts);
+    const monthlyLabels = @json($months);
+    const monthlyData = @json($totalAmountMonth);
+
+    // --- مخطط المبيعات اليومية ---
+    const dailyCtx = document.getElementById('dailySaleLineChart').getContext('2d');
+    new Chart(dailyCtx, {
+        type: 'line',
+        data: {
+            labels: dailyLabels,
+            datasets: [{
+                label: 'إجمالي المبيعات',
+                data: dailyData,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // --- مخطط المبيعات الشهرية ---
+    const monthlyCtx = document.getElementById('barChartYear').getContext('2d');
+    new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'إجمالي المبيعات',
+                data: monthlyData,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+});
+</script>
+@endpush
