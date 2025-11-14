@@ -17,6 +17,8 @@ use App\Http\Controllers\Backend\RolePermission\PermissionController;
 use App\Http\Controllers\Backend\Pos\OrderController;
 use App\Http\Controllers\Backend\Product\BrandController;
 use App\Http\Controllers\Backend\Product\PurchaseController;
+// ⬇️ هذا السطر مهم ليعمل المتحكم الجديد
+use App\Http\Controllers\Backend\Purchase\PurchaseReturnController;
 use App\Http\Controllers\Backend\RolePermission\RoleController;
 use App\Http\Controllers\Backend\Product\UnitController;
 use App\Http\Controllers\Backend\UserManagementController;
@@ -65,12 +67,22 @@ Route::prefix('admin')->as('backend.admin.')->middleware(['admin'])->group(funct
 
     // ==================================================
     // ⬇️            هذا هو التعديل الوحيد            ⬇️
-    // تم نقل السطر إلى هنا ليكون داخل مجموعة الـ admin
     // ==================================================
+    // مرتجعات المشتريات
+    Route::group(['as' => 'purchase-returns.', 'prefix' => 'purchase-returns'], function () {
+        Route::get('/', [PurchaseReturnController::class, 'index'])->name('index'); // هذا هو المسار الذي كان مفقوداً
+        Route::get('/create', [PurchaseReturnController::class, 'create'])->name('create');
+        Route::post('/store', [PurchaseReturnController::class, 'store'])->name('store');
+        Route::get('/get-products-by-purchase/{purchaseId}', [PurchaseReturnController::class, 'getProductsByPurchase'])->name('getProductsByPurchase');
+    });
+    // ==================================================
+    // ⬆️              نهاية التعديل              ⬆️
+    // ==================================================
+
     Route::post('products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('products.bulk-delete');
     Route::get('/profit/report', [ReportController::class, 'profitReport'])->name('profit.report');
 
-        Route::post('orders/bulk-delete', [\App\Http\Controllers\Backend\Pos\OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
+    Route::post('orders/bulk-delete', [\App\Http\Controllers\Backend\Pos\OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
 
     Route::resource('brands', BrandController::class);
     Route::resource('orders', OrderController::class);

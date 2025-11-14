@@ -141,9 +141,14 @@ $route = request()->route()->getName();
             </li>
             @endcan
 
+            {{-- ================================================== --}}
+            {{-- ⬇️ هذا هو القسم الذي تم تعديله بالكامل ⬇️ --}}
+            {{-- ================================================== --}}
             {{-- المشتريات --}}
-            @if (auth()->user()->hasAnyPermission(['purchase_create','purchase_view','purchase_update','purchase_delete']))
-            <li class="nav-item {{ request()->routeIs('backend.admin.purchase.*') ? 'menu-open' : '' }}">
+            {{-- تم إضافة صلاحيات المرتجعات هنا لضمان ظهور القسم --}}
+            @if (auth()->user()->hasAnyPermission(['purchase_create','purchase_view','purchase_update','purchase_delete', 'purchase_return_create', 'purchase_return_view']))
+            {{-- تم إضافة مسارات المرتجعات هنا لضمان بقاء القائمة مفتوحة --}}
+            <li class="nav-item {{ request()->routeIs(['backend.admin.purchase.*', 'backend.admin.purchase-returns.*']) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link">
                     <i class="fas fa-shopping-bag nav-icon"></i>
                     <p>المشتريات <i class="fas fa-angle-left right"></i></p>
@@ -163,17 +168,36 @@ $route = request()->route()->getName();
                             <p>إضافة شراء</p>
                         </a>
                     </li>
+                    
+                    {{-- ⬇️ هذا هو الكود الجديد الذي تمت إضافته ⬇️ --}}
+                    {{-- @can('purchase_return_view') --}}
+                    <li class="nav-item">
+                        <a href="{{route('backend.admin.purchase-returns.index')}}"
+                            class="nav-link {{ request()->routeIs('backend.admin.purchase-returns.index') ? 'active' : '' }}">
+                            <i class="fas fa-list-alt nav-icon"></i>
+                            <p>قائمة المرتجعات</p>
+                        </a>
+                    </li>
+                    {{-- @endcan --}}
+                    {{-- @can('purchase_return_create') --}}
+                    <li class="nav-item">
+                        <a href="{{route('backend.admin.purchase-returns.create')}}"
+                            class="nav-link {{ request()->routeIs('backend.admin.purchase-returns.create') ? 'active' : '' }}">
+                            <i class="fas fa-undo nav-icon"></i>
+                            <p>إضافة مرتجع شراء</p>
+                        </a>
+                    </li>
+                    {{-- @endcan --}}
+                    {{-- ⬆️ نهاية الكود الجديد ⬆️ --}}
                 </ul>
             </li>
             @endif
+            {{-- ================================================== --}}
+            {{-- ⬆️ نهاية القسم المعدل ⬆️ --}}
+            {{-- ================================================== --}}
 
-            {{-- ================================================== --}}
-            {{-- ⬇️ هذا هو القسم الذي تم تعديله بالكامل ⬇️ --}}
-            {{-- ================================================== --}}
             {{-- التقارير --}}
-            {{-- تم إضافة 'reports_profit' هنا لضمان ظهور القسم --}}
             @if (auth()->user()->hasAnyPermission(['reports_summary','reports_sales','reports_inventory', 'reports_profit']))
-            {{-- تم إضافة مسار تقرير الأرباح هنا لضمان بقاء القائمة مفتوحة --}}
             <li class="nav-item {{ request()->routeIs(['backend.admin.sale.report','backend.admin.sale.summery', 'backend.admin.inventory.report', 'backend.admin.profit.report']) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link">
                     <i class="fas fa-chart-bar nav-icon"></i>
@@ -202,7 +226,6 @@ $route = request()->route()->getName();
                         </a>
                     </li>
                     
-                    {{-- ⬇️ تم تعطيل شرط الصلاحية مؤقتاً كما طلبت ⬇️ --}}
                     @can('reports_profit') 
                     <li class="nav-item">
                         <a href="{{route('backend.admin.profit.report')}}"

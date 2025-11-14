@@ -1,5 +1,5 @@
 <?php
-
+// D:\qpos\qpos\app\Models\Purchase.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
