@@ -6,9 +6,44 @@
 <section class="content">
     @can('dashboard_view')
     <div class="container-fluid">
-        {{-- ================================================== --}}
-        {{-- ⬇️ هذا هو الجزء الذي كان مفقوداً وتمت إعادته ⬇️ --}}
-        {{-- ================================================== --}}
+
+        {{-- قسم الفلاتر الجديد --}}
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ route('backend.admin.dashboard') }}" method="GET">
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <label for="filter">عرض إحصائيات:</label>
+                            <select name="filter" id="filter" class="form-control">
+                                <option value="today" {{ $filterType == 'today' ? 'selected' : '' }}>اليوم</option>
+                                <option value="last_5_days" {{ $filterType == 'last_5_days' ? 'selected' : '' }}>آخر 5 أيام</option>
+                                <option value="last_7_days" {{ $filterType == 'last_7_days' ? 'selected' : '' }}>آخر 7 أيام</option>
+                                <option value="last_month" {{ $filterType == 'last_month' ? 'selected' : '' }}>آخر شهر</option>
+                                <option value="all_time" {{ $filterType == 'all_time' ? 'selected' : '' }}>كل الوقت</option>
+                                <option value="custom" {{ $filterType == 'custom' ? 'selected' : '' }}>نطاق مخصص</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4" id="custom-date-range" style="{{ $filterType == 'custom' ? '' : 'display:none;' }}">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="start_date">من تاريخ:</label>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ $startDate }}">
+                                </div>
+                                <div class="col">
+                                    <label for="end_date">إلى تاريخ:</label>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $endDate }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary mt-3 mt-md-0">تطبيق</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- المربعات العلوية للإحصائيات --}}
         <div class="row">
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="info-box">
@@ -21,7 +56,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
@@ -31,9 +65,7 @@
                     </div>
                 </div>
             </div>
-
             <div class="clearfix hidden-md-up"></div>
-
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
@@ -43,7 +75,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
@@ -55,6 +86,7 @@
             </div>
         </div>
 
+        {{-- المربعات الصغيرة للإحصائيات --}}
         <div class="row">
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
@@ -62,53 +94,38 @@
                         <h3>{{ $total_customer }}</h3>
                         <p>{{ __('app.customers') }}</p>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-bag"></i>
-                    </div>
                     <a href="{{ route('backend.admin.customers.index') }}" class="small-box-footer">
                         {{ __('app.more_info') }} <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
             </div>
-
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-success">
                     <div class="inner">
                         <h3>{{ $total_product }}</h3>
                         <p>{{ __('app.products') }}</p>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
                     <a href="{{ route('backend.admin.products.index') }}" class="small-box-footer">
                         {{ __('app.more_info') }} <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
             </div>
-
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-warning">
                     <div class="inner">
                         <h3>{{ $total_order }}</h3>
                         <p>{{ __('app.sale') }}</p>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-person-add"></i>
-                    </div>
                     <a href="{{ route('backend.admin.orders.index') }}" class="small-box-footer">
                         {{ __('app.more_info') }} <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
             </div>
-
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-danger">
                     <div class="inner">
                         <h3>{{ $total_sale_item }}</h3>
                         <p>{{ __('app.sale_item') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
                     </div>
                     <a href="{{ route('backend.admin.orders.index') }}" class="small-box-footer">
                         {{ __('app.more_info') }} <i class="fas fa-arrow-circle-right"></i>
@@ -116,33 +133,23 @@
                 </div>
             </div>
         </div>
-        {{-- ================================================== --}}
-        {{-- ⬆️ نهاية الجزء الذي كان مفقوداً ⬆️ --}}
-        {{-- ================================================== --}}
 
-        {{-- هذا الجزء الخاص بالمخططات البيانية --}}
+        {{-- المخططات البيانية --}}
         <div class="row">
-            <div class="col-md-6"> {{-- تم التعديل إلى col-md-6 ليتناسب مع الشاشات المختلفة --}}
+            <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">{{ __('app.daily_total_sales') }} <small>{{ $dateRange }}</small></h5>
-                        <div class="input-group w-auto">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                            </div>
-                            <input type="text" class="form-control" id="reservation" style="width: 180px;">
-                        </div>
+                    <div class="card-header">
+                        <h5 class="mb-0">{{ __('app.daily_total_sales') }} <small>({{ $dateRange }})</small></h5>
                     </div>
                     <div class="card-body">
                         <canvas id="dailySaleLineChart"></canvas>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-6"> {{-- تم التعديل إلى col-md-6 ليتناسب مع الشاشات المختلفة --}}
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5>{{ __('app.monthly_total_sales') }} <small>{{ $currentYear }}</small></h5>
+                        <h5>{{ __('app.monthly_total_sales') }} <small>({{ $currentYear }})</small></h5>
                     </div>
                     <div class="card-body">
                         <canvas id="barChartYear"></canvas>
@@ -156,20 +163,17 @@
 @endsection
 
 @push('script')
-{{-- تأكد من أن القالب الخاص بك يقوم بتحميل هذه المكتبات --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 <script>
 $(function( ) {
-    // --- تهيئة منتقي التواريخ (Date Range Picker) ---
-    $('#reservation').daterangepicker({
-        opens: 'left'
-    }, function(start, end, label) {
-        const daterange = start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD');
-        window.location.href = "{{ route('backend.admin.dashboard') }}?daterange=" + daterange;
+    // --- كود التحكم في إظهار وإخفاء حقول التاريخ ---
+    $('#filter').on('change', function() {
+        if (this.value === 'custom') {
+            $('#custom-date-range').show();
+        } else {
+            $('#custom-date-range').hide();
+        }
     });
 
     // --- تهيئة بيانات المخططات من الـ Controller ---

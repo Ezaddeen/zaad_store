@@ -10,60 +10,85 @@ use App\Models\OrderTransaction;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // ⬅️ أضف هذا السطر
+use Illuminate\Support\Facades\DB; // تأكد من وجود هذا السطر
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // ==================================================
-        // ⬇️ الكود المحسن لحساب الإحصائيات العامة ⬇️
-        // ==================================================
-        $orderTotals = Order::select(
-            DB::raw('SUM(sub_total) as sub_total'),
-            DB::raw('SUM(discount) as discount'),
-            DB::raw('SUM(total) as total'),
-            DB::raw('SUM(paid) as paid'),
-            DB::raw('SUM(due) as due')
-        )->first();
+        // 1. تحديد الفلتر الزمني (الافتراضي: آخر 7 أيام)
+        $filterType = $request->query('filter', 'last_7_days');
+        $startDate = now()->subDays(6)->startOfDay();
+        $endDate = now()->endOfDay();
 
+        switch ($filterType) {
+            case 'today':
+                $startDate = now()->startOfDay();
+                break;
+            case 'last_5_days':
+                $startDate = now()->subDays(4)->startOfDay();
+                break;
+            case 'last_7_days':
+                // هو الافتراضي
+                break;
+            case 'last_month':
+                $startDate = now()->subMonth()->startOfDay();
+                break;
+            case 'all_time':
+                $startDate = null; // سيتم تجاهله
+                break;
+            case 'custom':
+                if ($request->has('start_date') && $request->has('end_date')) {
+                    $startDate = Carbon::parse($request->start_date)->startOfDay();
+                    $endDate = Carbon::parse($request->end_date)->endOfDay();
+                }
+                break;
+        }
+
+        // 2. بناء استعلام الطلبات الرئيسي بناءً على الفلتر
+        $ordersQuery = Order::query();
+        if ($filterType !== 'all_time' && $startDate) {
+            $ordersQuery->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        // استخدام clone() للحصول على النتائج بدون التأثير على الاستعلام الأصلي
+        $orders = $ordersQuery->clone()->get();
+
+        // 3. حساب إحصائيات المربعات العلوية من الطلبات المفلترة
         $data = [
-            'sub_total' => $orderTotals->sub_total ?? 0,
-            'discount' => $orderTotals->discount ?? 0,
-            'total' => $orderTotals->total ?? 0,
-            'paid' => $orderTotals->paid ?? 0,
-            'due' => $orderTotals->due ?? 0,
-            'total_customer' => Customer::count(),
-            'total_order' => Order::count(), // أسرع من جلب الكل ثم العد
-            'total_product' => Product::count(),
-            'total_sale_item' => OrderProduct::sum('quantity'),
+            'sub_total' => $orders->sum('sub_total'),
+            'discount' => $orders->sum('discount'),
+            'total' => $orders->sum('total'),
+            'paid' => $orders->sum('paid'),
+            'due' => $orders->sum('due'),
+            'total_order' => $orders->count(), // عدد المبيعات (الفواتير)
         ];
 
-        // --- بقية الكود يبقى كما هو ---
+        // 4. حساب إحصائيات المربعات الأخرى (بعضها لا يتأثر بالفلتر)
+        $data['total_customer'] = Customer::count(); // إجمالي العملاء دائماً
+        $data['total_product'] = Product::count(); // إجمالي المنتجات دائماً
 
-        $startDate = Carbon::now()->subDays(30)->format('Y-m-d');
-        $endDate = Carbon::now()->format('Y-m-d');
-        if($request->has('daterange')) {
-            $dates = explode(' to ', $request->query('daterange'));
-            if (count($dates) == 2) {
-                $startDate = Carbon::parse($dates[0])->format('Y-m-d');
-                $endDate = Carbon::parse($dates[1])->format('Y-m-d');
-            }
+        // حساب "عنصر مبيع" بناءً على الفلتر
+        $orderIds = $orders->pluck('id');
+        $data['total_sale_item'] = OrderProduct::whereIn('order_id', $orderIds)->sum('quantity');
+
+        // 5. إعداد بيانات المخططات
+        // مخطط المبيعات اليومية (يستخدم نفس الفلتر الزمني)
+        $dailyTotalsQuery = OrderTransaction::query();
+        if ($filterType !== 'all_time' && $startDate) {
+            $dailyTotalsQuery->whereBetween('created_at', [$startDate, $endDate]);
         }
-        $dailyTotals = OrderTransaction::selectRaw('DATE(created_at) as date, SUM(amount) as total_amount')
-            ->whereBetween('created_at', [$startDate, $endDate])
+        $dailyTotals = $dailyTotalsQuery->selectRaw('DATE(created_at) as date, SUM(amount) as total_amount')
             ->groupBy('date')
-            ->orderBy('date', 'DESC')
+            ->orderBy('date', 'ASC')
             ->get();
-        $dates = $dailyTotals->pluck('date')->toArray();
-        $totalAmounts = $dailyTotals->pluck('total_amount')->toArray();
-        $data['dates'] = $dates;
-        $data['totalAmounts'] = $totalAmounts;
-        $data['dateRange'] = 'from '. $startDate . ' to ' . $endDate;
 
+        $data['dates'] = $dailyTotals->pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))->toArray();
+        $data['totalAmounts'] = $dailyTotals->pluck('total_amount')->toArray();
+        $data['dateRange'] = $filterType !== 'all_time' ? $startDate->format('M d, Y') . ' to ' . $endDate->format('M d, Y') : 'كل الوقت';
+
+        // مخطط المبيعات الشهرية (يعرض دائماً السنة الحالية)
         $currentYear = now()->year;
         $data['currentYear'] = $currentYear;
-
         $salesData = OrderTransaction::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(amount) as total_amount')
             ->whereYear('created_at', $currentYear)
             ->groupBy('month')
@@ -75,11 +100,15 @@ class DashboardController extends Controller
             $tempMonths[] = $monthKey;
             $tempTotalAmountMonth[] = $salesData[$monthKey] ?? 0;
         }
-
         $data['months'] = $tempMonths;
         $data['totalAmountMonth'] = $tempTotalAmountMonth;
 
-        return view('backend.index', $data);
+        // 6. تمرير كل البيانات إلى الـ view
+        return view('backend.index', array_merge($data, [
+            'filterType' => $filterType,
+            'startDate' => $filterType !== 'all_time' ? $startDate->format('Y-m-d') : '',
+            'endDate' => $filterType !== 'all_time' ? $endDate->format('Y-m-d') : '',
+        ]));
     }
 
     public function profile()

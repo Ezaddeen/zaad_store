@@ -167,9 +167,14 @@ $route = request()->route()->getName();
             </li>
             @endif
 
+            {{-- ================================================== --}}
+            {{-- ⬇️ هذا هو القسم الذي تم تعديله بالكامل ⬇️ --}}
+            {{-- ================================================== --}}
             {{-- التقارير --}}
-            @if (auth()->user()->hasAnyPermission(['reports_summary','reports_sales','reports_inventory']))
-            <li class="nav-item {{ request()->routeIs(['backend.admin.sale.report','backend.admin.sale.summery']) ? 'menu-open' : '' }}">
+            {{-- تم إضافة 'reports_profit' هنا لضمان ظهور القسم --}}
+            @if (auth()->user()->hasAnyPermission(['reports_summary','reports_sales','reports_inventory', 'reports_profit']))
+            {{-- تم إضافة مسار تقرير الأرباح هنا لضمان بقاء القائمة مفتوحة --}}
+            <li class="nav-item {{ request()->routeIs(['backend.admin.sale.report','backend.admin.sale.summery', 'backend.admin.inventory.report', 'backend.admin.profit.report']) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link">
                     <i class="fas fa-chart-bar nav-icon"></i>
                     <p>التقارير <i class="fas fa-angle-left right"></i></p>
@@ -196,6 +201,17 @@ $route = request()->route()->getName();
                             <p>تقرير المخزون</p>
                         </a>
                     </li>
+                    
+                    {{-- ⬇️ تم تعطيل شرط الصلاحية مؤقتاً كما طلبت ⬇️ --}}
+                    @can('reports_profit') 
+                    <li class="nav-item">
+                        <a href="{{route('backend.admin.profit.report')}}"
+                            class="nav-link {{ request()->routeIs('backend.admin.profit.report') ? 'active' : '' }}">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            <p>تقرير الأرباح</p>
+                        </a>
+                    </li>
+                     @endcan 
                 </ul>
             </li>
             @endif

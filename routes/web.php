@@ -68,6 +68,9 @@ Route::prefix('admin')->as('backend.admin.')->middleware(['admin'])->group(funct
     // تم نقل السطر إلى هنا ليكون داخل مجموعة الـ admin
     // ==================================================
     Route::post('products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('products.bulk-delete');
+    Route::get('/profit/report', [ReportController::class, 'profitReport'])->name('profit.report');
+
+        Route::post('orders/bulk-delete', [\App\Http\Controllers\Backend\Pos\OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
 
     Route::resource('brands', BrandController::class);
     Route::resource('orders', OrderController::class);
